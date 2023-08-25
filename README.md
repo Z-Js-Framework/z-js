@@ -3,16 +3,16 @@ A simple almost html based js framework!
 
 ## Why?
 
-We needed something very simple but can make a plain html, css and js project have a modern like developer experience and be scalable and yet has the power of single page applications (SPAs) or nay to say, react applications. Nothing fancy, just the bare minimum, we capitalize on intuitve architecture, native web platform features and principles instead of a bunch of libs, meta frameworks etc that newer devs are even not familiar with usually. Here if know html, and some js, you can still make a great app, with only that you know!
+We needed something very simple but can make a plain html, css and js project have a modern like developer experience and be scalable and yet has the power of single page applications (SPAs) or not to say, react applications. Nothing fancy, just the bare minimum, we capitalize on intuitve architecture, native web platform features and principles instead of a bunch of libs, meta frameworks etc that newer devs are even not familiar with usually. Here if know html, and some js, you can still make a great app, with only that you know!
 
 ## How it works?
 
-This is all plain js and html just using js template literals, it's not `react`, we just using module syntax that allows us to import these templates as if components simillar to react, but notice their no build tools or bundlers or whatever yet here, make it work!
+This is all plain js and html just using js template literals, it's not `react`, we just using module syntax that allows us to import these templates as if components simillar to react, but notice their no build tools or bundlers or whatever yet here, and funny enough, it works!
 
 ``` js
-// in compoents/Header.js
+// in components/header.js
 export const Header = (props) => {
-  let userName = props.user ? props.user : 'John Doe!';
+  let userName = props.username ? props.username : 'John Doe!';
 
   return `<header>
     <nav>
@@ -26,7 +26,7 @@ export const Header = (props) => {
 and footer then footer.js looks like:
 
 ``` js
-// in compoents/Footer.js
+// in components/footer.js
 export const Footer = (props) => {
   return `<footer>
     <div>
@@ -40,10 +40,10 @@ export const Footer = (props) => {
 then all handled in `index.js` as below for example:
 
 ``` js
-
-import Z from './z';
-import { Header } from './components/header';
-import { Footer } from './components/footer';
+// in index.js
+import { Header } from './components/header.js';
+import { Footer } from './components/footer.js';
+import Z from './z/index.js';
 
 const myApp = document.querySelector('#myApp');
 
@@ -55,13 +55,13 @@ let myAppId = 'myApp';
 // start rendering stuff
 window.onload = () => {
   console.log('Am index and then comes Z');
-  Z.replace(myAppId, Header({ username: kizz }));
-  Z.append('after', myAppId, Footer);
+  Z.replace(myAppId, Header({ username: 'kizz' }));
+  Z.append('after', myAppId, Footer());
 };
 
 ```
 
-And the Z class or so is an abstraction to handle all the dynamic renderings of your appliaction, states, and etc.
+And the Z class or instance is an abstraction to handle all the dynamic renderings of your application, states, and etc.
 
 
 ## What Next?

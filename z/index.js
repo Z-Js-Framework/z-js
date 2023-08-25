@@ -1,23 +1,23 @@
-import { makeHtml } from './utilities';
+import { makeHtml } from './utilities.js';
 
-export default function Z() {
+function ZEngine() {
   let ZParent;
 
   const log = () => {
     console.log('Hello Z Framework!');
   };
 
-  const setParent = (parentElement) => {
+  this.setParent = (parentElement) => {
     ZParent = parentElement;
   };
 
-  const replace = (elementID, newContent) => {
+  this.replace = (elementID, newContent) => {
     let element = document.getElementById(elementID);
     element.innerHTML = '';
     element.innerHTML = newContent;
   };
 
-  const append = (order, elementID, newContent) => {
+  this.append = (order, elementID, newContent) => {
     let element = document.getElementById(elementID);
 
     if (order === 'after') {
@@ -27,5 +27,9 @@ export default function Z() {
     }
   };
 
-  return { log, setParent, replace, append };
+  // return { log, setParent, replace, append };
 }
+
+const Z = new ZEngine();
+
+export default Z;

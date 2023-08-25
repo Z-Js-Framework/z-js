@@ -1,5 +1,5 @@
 export const Header = (props) => {
-  let userName = props.user ? props.user : 'John Doe!';
+  let userName = props.username ? props.username : 'John Doe!';
 
   return `<header>
     <nav>
