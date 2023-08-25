@@ -7,6 +7,8 @@ We needed something very simple but can make a plain html, css and js project ha
 
 ## How it works?
 
+Basically just create 3 files initially, `index.js`, `index.html` and maybe also a style.css file if you like, then a components folder to keep your html strings as compoents, then bring in `z.js` and you good to go, no npm package for now, it will just be a single file for now, try the whole thing here: [ Try Z.Js On Gitpod](https://gitpod.io#snapshot/b9a123b5-4b7d-41dc-8e8c-7db2f109f096)
+
 This is all plain js and html just using js template literals, it's not `react`, we just using module syntax that allows us to import these templates as if components simillar to react, but notice their no build tools or bundlers or whatever yet here, and funny enough, it works!
 
 ``` js
