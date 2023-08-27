@@ -1,7 +1,9 @@
 export const Footer = (props) => {
-  return `<footer>
+  return `
+  <footer>
     <div>
-      <p>copy; 2023 Z Js</p>
+      <p>&copy; 2023 Z Js Framework</p>
     </div>
-  </footer>`;
+  </footer>
+  `;
 };

@@ -4,8 +4,12 @@ export function _useNavigate(route) {
   return window.location.href;
 }
 
+export const _getContent = (component) => {
+  return typeof component === 'function' ? component() : component;
+};
+
 // some utility export functions
-export function makeHtml(htmlString) {
+export function _makeHtml(htmlString) {
   const template = document.createElement('template');
   template.innerHTML = htmlString.trim();
   return template.content.firstElementChild;
@@ -18,7 +22,7 @@ export function _formatCurrency(amount) {
   return formatter.format(amount);
 }
 
-export function makeFrame(id, urlPath) {
+export function _makeFrame(id, urlPath) {
   let newIframe = document.createElement('iframe');
   newIframe.id = id;
   newIframe.src = urlPath;
