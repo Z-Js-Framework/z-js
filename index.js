@@ -1,17 +1,17 @@
 import { Header } from './components/header.js';
 import { Footer } from './components/footer.js';
-import Z from './z/index.js';
+import ZPage from './z/z.js';
 
-const myApp = document.querySelector('#myApp');
+const homePage = document.querySelector('#homePage');
 
 // set the shell or main element eg. body
-Z.setParent(myApp);
+const Z = new ZPage(homePage);
 
-let myAppId = 'myApp';
+let myAppId = 'homePage';
 
-// start rendering stuff
-window.onload = () => {
-  console.log('Am index and then comes Z');
+// start rendering stuff, we have just a loader in our html, so we delay here for 2 minute and then do stuff
+setTimeout(() => {
   Z.replace(myAppId, Header({ username: 'kizz' }));
-  Z.append('after', myAppId, Footer());
-};
+  Z.append('after', myAppId, Footer);
+  Z.log();
+}, 2000);

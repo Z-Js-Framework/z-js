@@ -1,3 +1,34 @@
-p {
-  color: green;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  /* set variables */
+  --z-color: darkolivegreen;
+}
+
+body {
+  width: 100%;
+  min-height: 100dvh;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.loading-container {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100dvh;
+}
+
+.loading {
+  color: var(--z-color);
+  font-weight: bold;
+  font-size: 1.1rem;
 }

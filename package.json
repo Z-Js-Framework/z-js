@@ -1,0 +1,28 @@
+{
+  "name": "z-js-framework",
+  "version": "1.0.1",
+  "description": "A simple almost html based js framework!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javaScriptKampala/z-js.git"
+  },
+  "keywords": [
+    "Js",
+    "Framework",
+    "vanilla",
+    "js",
+    "framework",
+    "htmx",
+    "html"
+  ],
+  "author": "Hussein Kizz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/javaScriptKampala/z-js/issues"
+  },
+  "homepage": "https://github.com/javaScriptKampala/z-js#readme"
+}
