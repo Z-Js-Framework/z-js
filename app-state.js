@@ -1,6 +1,7 @@
 // define all your data and state here
 export const APP_STATE = {
   appLoading: false,
+  count: 0,
   $user: 'Kizz',
   $todos: [
     {

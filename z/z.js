@@ -9,12 +9,15 @@ export default function ZPage(parentElement, appState) {
   let ZParent = parentElement;
 
   // intialize store and expose store methods
+  const { store, setStore, getStoreValue, subscribe } = useStore(appState);
   const stateManager = () => {
-    const { store, setStore } = useStore(appState);
-    // do more stuff with state
+    // do more stuff with state like hooking in events
 
-    return { store, setStore };
+    return { state: store, setState: setStore, getState: getStoreValue };
   };
+
+  // * Note: if state manager subscribes, it gets called whenever state changes, this can be used to dispatch events and trigger reactivity in elements
+  // subscribe(stateManager);
 
   // logs whatever was rendered in broswer to console
   const log = () => {
