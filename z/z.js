@@ -1,11 +1,20 @@
+import { useStore } from './store.js';
 import { _getContent, _makeHtml } from './utilities.js';
 
 // Todo: accept element instead of element Id in methods!
 // Todo: handle component visibility change, a method to hide or show a component
 
-export default function ZPage(parentElement) {
+export default function ZPage(parentElement, appState) {
   // we will do something with the parent element
   let ZParent = parentElement;
+
+  // intialize store and expose store methods
+  const stateManager = () => {
+    const { store, setStore } = useStore(appState);
+    // do more stuff with state
+
+    return { store, setStore };
+  };
 
   // logs whatever was rendered in broswer to console
   const log = () => {
@@ -63,5 +72,5 @@ export default function ZPage(parentElement) {
   };
 
   // Z funtion exports exposed with Z.method syntax
-  return { log, setParent, replace, append, render, showLoader };
+  return { log, setParent, replace, append, render, showLoader, stateManager };
 }

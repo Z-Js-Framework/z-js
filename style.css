@@ -11,13 +11,24 @@ body {
   width: 100%;
   min-height: 100dvh;
   font-family: 'Courier New', Courier, monospace;
+  accent-color: var(--z-color);
 }
 main {
+  width: 100%;
   padding: 1rem 2rem;
 }
 
 .container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wrapper {
+  width: 100%;
+  gap: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -83,11 +94,26 @@ main {
   font-weight: 600;
 }
 
-.logout-button {
+button,
+input {
   padding-inline: 5px;
   padding-block: 2px;
 }
 
-.logout-button:hover {
+button:hover {
   color: var(--z-color);
+}
+
+.edit-button {
+  color: green;
+}
+.delete-button {
+  color: red;
+}
+
+@media screen and (min-width: 768px) {
+  .wrapper {
+    width: 80%;
+    margin-inline: auto;
+  }
 }

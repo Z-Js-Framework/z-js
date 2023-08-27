@@ -12,7 +12,7 @@
 <body id="homePage" class="container">
   <!-- The App Header -->
   <header class="top-header">
-    <nav class="header-nav">
+    <nav aria-label="main navigation" class="header-nav">
       <h1 class="z-logo">Z.Js</h1>
       <div class="flex-row">
         <p class="username">User: Kizz</p>
@@ -22,8 +22,22 @@
   </header>
   <!-- The Page Content -->
   <main class="app-content">
-    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cum vero quis tempora voluptatibus pariatur laboriosam
-      praesentium doloremque, iusto harum. Dicta?</p>
+    <div class="todos-wrapper wrapper">
+      <!-- The Todo Controls -->
+      <nav aria-label="todo-controls" class="controls-group">
+        <input type="text" name="todoInput" id="todoInput">
+        <button id="addTodoButton" class="add-button">Add Todo</button>
+      </nav>
+      <!-- The Todos -->
+      <section class="todos-list">
+        <div class="todo-item">
+          <input type="checkbox" name="todoCheck" id="todoCheck" checked>
+          <span>feed the cat!</span>
+          <button class="edit-button">edit</button>
+          <button class="delete-button">delete</button>
+        </div>
+      </section>
+    </div>
   </main>
   <!-- The App Footer -->
   <footer>
