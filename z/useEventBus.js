@@ -12,22 +12,51 @@ export function useEventBus(ZParent, store) {
   const autoGenerateInitialStateEvents = () => {
     const stateKeyEventNamePairs = generateEventNames(store);
     stateKeyEventNamePairs.forEach((pair) => {
-      eventsStore[pair.stateKey] = new Event(pair.eventName);
+      eventsStore[pair.stateKey] = new CustomEvent(pair.eventName, {
+        detail: {
+          message: 'This is additional data for a z event',
+        },
+        bubbles: true,
+        cancelable: true,
+        composed: false,
+      });
     });
   };
 
   // define event dispatching method
-  const eventDispatcher = (newState) => {
+  const eventDispatcher = (oldState, newState) => {
+    const stateKeyEventNamePairs = generateEventNames(store);
     Object.keys(newState).forEach((stateKey) => {
-      ZParent.dispatchEvent(eventsStore[stateKey]);
-      // todo: remove this log after debugging events
-      console.log('event triggered:', eventsStore[stateKey]);
+      if (oldState[stateKey] !== newState[stateKey]) {
+        ZParent.dispatchEvent(eventsStore[stateKey]);
+
+        // todo: remove this log after debugging events
+        console.log('event triggered:', eventsStore[stateKey]);
+        // stateKeyEventNamePairs.forEach((pair) => {
+        //   if (pair.stateKey === stateKey) {
+        //     // Global event listener to capture onUserChanged event
+        //     document.addEventListener(pair.eventName, (e) => {
+        //       console.log('user change event detected globally');
+        //     });
+        //   }
+        // });
+      }
     });
   };
 
   // deifne event creation method
   const eventCreator = (stateKeyEventNamePair) => {
-    eventsStore[pair.stateKey] = new Event(pair.eventName);
+    eventsStore[stateKeyEventNamePair.stateKey] = new CustomEvent(
+      stateKeyEventNamePair.eventName,
+      {
+        detail: {
+          message: 'This is additional data for a z event',
+        },
+        bubbles: true,
+        cancelable: true,
+        composed: false,
+      }
+    );
   };
 
   // define helper function to generate event names from state object
@@ -52,7 +81,8 @@ export function useEventBus(ZParent, store) {
   autoGenerateInitialStateEvents();
 
   // auto subscribe events to state changes
-  const eventSubscriptionHandler = (newState) => eventDispatcher(newState);
+  const eventSubscriptionHandler = (oldState, newState) =>
+    eventDispatcher(oldState, newState);
 
   // use event bus function exports
   return {

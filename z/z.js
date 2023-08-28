@@ -10,10 +10,7 @@ export default function ZPage(parentElement, appState) {
   let ZParent = parentElement;
 
   // intialize event bus and expose event methods
-  const { eventsStore, eventSubscriptionHandler } = useEventBus(
-    ZParent,
-    appState
-  );
+  const { eventSubscriptionHandler } = useEventBus(ZParent, appState);
 
   // intialize store and expose store methods
   const { store, setStore, getStoreValue } = useStore(
@@ -21,17 +18,12 @@ export default function ZPage(parentElement, appState) {
     eventSubscriptionHandler
   );
 
-  console.log(eventsStore);
-
   // define main state manager!
   const stateManager = () => {
     // do more stuff with state like hooking in events
 
     return { state: store, setState: setStore, getState: getStoreValue };
   };
-
-  // * Note: if state manager subscribes, it gets called whenever state changes, this can be used to dispatch events and trigger reactivity in elements
-  // subscribe(stateManager);
 
   // logs whatever was rendered in broswer to console
   const log = () => {

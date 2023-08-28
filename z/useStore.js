@@ -20,23 +20,25 @@ export function useStore(initialState, eventSubscriptionHandler) {
     if (typeof newState === 'function') {
       nextStoreValue = newState(prevStoreValue);
 
-      // don't modify state if nothing changed and subscribe
+      // don't modify state if nothing changed and subscribe event and state
       if (prevStoreValue === nextStoreValue) {
         return;
       } else {
-        subscribe(newState);
         store = nextStoreValue;
-        eventSubscriptionHandler(store);
+        let callback = () => eventSubscriptionHandler(prevStoreValue, store);
+        subscribe(newState);
+        subscribe(callback);
       }
     } else {
       nextStoreValue = newState;
 
-      // still don't modify state if nothing changed and don't subscribe
+      // still don't modify state if nothing changed and subscribe event only
       if (prevStoreValue === nextStoreValue) {
         return;
       } else {
         store = nextStoreValue;
-        eventSubscriptionHandler(store);
+        let callback = () => eventSubscriptionHandler(prevStoreValue, store);
+        subscribe(callback);
       }
     }
 

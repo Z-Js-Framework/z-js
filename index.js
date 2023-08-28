@@ -12,7 +12,7 @@ const Z = new ZPage(homePage, APP_STATE);
 
 // get state methods
 const { state, setState, getState } = Z.stateManager();
-console.log('App State:', state);
+console.log('Initial App State:', state);
 
 // Todo: remove need for spreading state while updating it
 // Todo: add in custom effects to gracefully handle effects when state changes
@@ -20,11 +20,15 @@ addTodoButton.addEventListener('click', (e) => {
   // setState((state) => {...state, state.$user: 'Javascript'})
   setState((prevState) => ({ ...prevState, $user: 'Javascript' }));
   let currentState = getState();
-  console.log('state after change', currentState);
+  console.log('app state after change:', currentState);
 });
 
 UsernameElement.addEventListener('onUserChanged', (e) => {
-  console.log('user change event detected');
+  console.log('user change event detected on username');
+});
+
+homePage.addEventListener('onUserChanged', (e) => {
+  console.log('user change event detected on body');
 });
 
 // Z.replace(myAppId, Header({ username: 'Kizz' }));
