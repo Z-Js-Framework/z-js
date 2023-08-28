@@ -1,8 +1,8 @@
 import { syncLocalStorage } from './syncLocalStorage.js';
 
-export function useStore(initialState) {
+export function useStore(initialState, eventSubscriptionHandler) {
   // sync and return the initial localStorage state
-  let localState = syncLocalStorage(initialState);
+  // let localState = syncLocalStorage(initialState);
 
   // define the store, local state overites any non local state
   // let store = { ...initialState, ...localState };
@@ -26,6 +26,7 @@ export function useStore(initialState) {
       } else {
         subscribe(newState);
         store = nextStoreValue;
+        eventSubscriptionHandler(store);
       }
     } else {
       nextStoreValue = newState;
@@ -35,6 +36,7 @@ export function useStore(initialState) {
         return;
       } else {
         store = nextStoreValue;
+        eventSubscriptionHandler(store);
       }
     }
 

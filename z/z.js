@@ -1,4 +1,5 @@
-import { useStore } from './store.js';
+import { useEventBus } from './useEventBus.js';
+import { useStore } from './useStore.js';
 import { _getContent, _makeHtml } from './utilities.js';
 
 // Todo: accept element instead of element Id in methods!
@@ -8,8 +9,21 @@ export default function ZPage(parentElement, appState) {
   // we will do something with the parent element
   let ZParent = parentElement;
 
+  // intialize event bus and expose event methods
+  const { eventsStore, eventSubscriptionHandler } = useEventBus(
+    ZParent,
+    appState
+  );
+
   // intialize store and expose store methods
-  const { store, setStore, getStoreValue, subscribe } = useStore(appState);
+  const { store, setStore, getStoreValue } = useStore(
+    appState,
+    eventSubscriptionHandler
+  );
+
+  console.log(eventsStore);
+
+  // define main state manager!
   const stateManager = () => {
     // do more stuff with state like hooking in events
 

@@ -1,6 +1,6 @@
 {
   "name": "z-js-framework",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A simple almost html based js framework!",
   "main": "index.js",
   "scripts": {
