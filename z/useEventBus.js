@@ -30,22 +30,21 @@ export function useEventBus(getStoreValue, setStore) {
 
   // Todo: make the onEvent method to have updated data always
   // bind onEvent method to all html elements
-  HTMLElement.prototype.onEvent = function (eventName, callbackFn) {
-    let targetEvent = getEventData(eventName);
+  const bindEvents = () => {
+    HTMLElement.prototype.onEvent = function (eventName, callbackFn) {
+      let targetEvent = getEventData(eventName);
 
-    if (!targetEvent) {
-      throw new Error(
-        `Event "${eventName}" does not exist. Please create it using eventCreator method before using it.`
-      );
-    }
-    targetEvent.callbacks.add(() => callbackFn(getEventData(eventName).data));
+      if (!targetEvent) {
+        throw new Error(
+          `Event "${eventName}" does not exist. Please create it using eventCreator method before using it.`
+        );
+      }
+      targetEvent.callbacks.add(() => callbackFn(getEventData(eventName).data));
+    };
   };
 
   // define event dispatching method
   const eventDispatcher = (oldState, newState) => {
-    // refresh events data
-    // autoGenerateStateEvents();
-
     // get mutated state's key
     let changedStateKey = compareStates(oldState, newState);
 
@@ -107,6 +106,7 @@ export function useEventBus(getStoreValue, setStore) {
 
   // auto gen initialState events
   autoGenerateStateEvents();
+  bindEvents();
 
   // auto subscribe events to state changes
   const eventSubscriptionHandler = (oldState, newState) =>
