@@ -9,20 +9,19 @@ export default function ZPage(parentElement, appState) {
   // we will do something with the parent element
   let ZParent = parentElement;
 
-  // intialize event bus and expose event methods
-  const { eventSubscriptionHandler } = useEventBus(ZParent, appState);
-
   // intialize store and expose store methods
-  const { store, setStore, getStoreValue } = useStore(
-    appState,
-    eventSubscriptionHandler
-  );
+  const { store, setStore, getStoreValue, eventManager } = useStore(appState);
 
   // define main state manager!
   const stateManager = () => {
     // do more stuff with state like hooking in events
 
-    return { state: store, setState: setStore, getState: getStoreValue };
+    return {
+      state: store,
+      setState: setStore,
+      getState: getStoreValue,
+      eventManager,
+    };
   };
 
   // logs whatever was rendered in broswer to console

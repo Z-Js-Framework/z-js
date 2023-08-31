@@ -1,6 +1,7 @@
 import { syncLocalStorage } from './syncLocalStorage.js';
+import { useEventBus } from './useEventBus.js';
 
-export function useStore(initialState, eventSubscriptionHandler) {
+export function useStore(initialState) {
   // sync and return the initial localStorage state
   // let localState = syncLocalStorage(initialState);
 
@@ -25,7 +26,8 @@ export function useStore(initialState, eventSubscriptionHandler) {
         return;
       } else {
         store = nextStoreValue;
-        let callback = () => eventSubscriptionHandler(prevStoreValue, store);
+        let callback = () =>
+          eventManager.eventSubscriptionHandler(prevStoreValue, store);
         subscribe(newState);
         subscribe(callback);
       }
@@ -37,7 +39,8 @@ export function useStore(initialState, eventSubscriptionHandler) {
         return;
       } else {
         store = nextStoreValue;
-        let callback = () => eventSubscriptionHandler(prevStoreValue, store);
+        let callback = () =>
+          eventManager.eventSubscriptionHandler(prevStoreValue, store);
         subscribe(callback);
       }
     }
@@ -55,5 +58,8 @@ export function useStore(initialState, eventSubscriptionHandler) {
     return () => listeners.delete(listener);
   };
 
-  return { store, setStore, getStoreValue, subscribe };
+  // expose event methods
+  const eventManager = useEventBus(getStoreValue, setStore);
+
+  return { store, setStore, getStoreValue, subscribe, eventManager };
 }

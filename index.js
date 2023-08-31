@@ -11,31 +11,32 @@ const UsernameElement = document.querySelector('.username');
 const Z = new ZPage(homePage, APP_STATE);
 
 // get state methods
-const { state, setState, getState } = Z.stateManager();
+const { state, setState, getState, eventManager } = Z.stateManager();
 console.log('Initial App State:', state);
 
-// Todo: remove need for spreading state while updating it
-// Todo: add in custom effects to gracefully handle effects when state changes
 addTodoButton.addEventListener('click', (e) => {
-  // setState((state) => {...state, state.$user: 'Javascript'})
   setState((prevState) => ({ ...prevState, $user: 'Javascript' }));
   let currentState = getState();
   console.log('app state after change:', currentState);
 });
 
-UsernameElement.addEventListener('onUserChanged', (e) => {
-  console.log('user change event detected on username');
+UsernameElement.onEvent('userChanged', (data) => {
+  console.log('user change event detected, new username:', data);
 });
 
-homePage.addEventListener('onUserChanged', (e) => {
-  console.log('user change event detected on body');
-});
+// homePage.addEventListener('onUserChanged', (e) => {
+//   console.log('user change event detected on body');
+// });
 
 // Z.replace(myAppId, Header({ username: 'Kizz' }));
 // Z.append('after', myAppId, Footer);
 
 // show a splash screen loader for 2 milli seconds
-Z.showLoader(Loader, 2000);
+// Z.showLoader(Loader, 2000);
 
 // optional, logs whatever Z rendered in broswer to the console
 // Z.log();
+
+// Todo: make a z load into method and z use template for loop method
+// Todo: remove need for spreading state while updating it
+// Todo: add in custom effects to gracefully handle effects when state changes

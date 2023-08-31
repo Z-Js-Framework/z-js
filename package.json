@@ -3,6 +3,7 @@
   "version": "1.0.4",
   "description": "A simple almost html based js framework!",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

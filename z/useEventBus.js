@@ -1,62 +1,81 @@
-export function useEventBus(ZParent, store) {
-  // auto create custom events function for all initialState keys
-  // subscribe all of them to the specified store state change
-  // follow the onStateNameChanged convention to name the events
-  // add in some optimizations like removing event listeners when element is removed or leaves the viewport
-  // dispatch an event every time a state changes by subscribing  that specific event dispatching function with subscribe method
-
+export function useEventBus(getStoreValue, setStore) {
   // define event-store object to store all events
   let eventsStore = {};
 
   // auto create events for each initialState state item by default
-  const autoGenerateInitialStateEvents = () => {
+  const autoGenerateStateEvents = () => {
+    let store = getStoreValue();
     const stateKeyEventNamePairs = generateEventNames(store);
     stateKeyEventNamePairs.forEach((pair) => {
-      eventsStore[pair.stateKey] = new CustomEvent(pair.eventName, {
-        detail: {
-          message: 'This is additional data for a z event',
-        },
-        bubbles: true,
-        cancelable: true,
-        composed: false,
-      });
+      let newEvent = {
+        eventName: pair.eventName,
+        callbacks: new Set(),
+        data: store[pair.stateKey],
+      };
+      eventsStore[pair.stateKey] = newEvent;
     });
+
+    console.log('event store:', eventsStore);
+  };
+
+  // Todo: make the onEvent method to have updated data always
+  // bind onEvent method to all html elements
+  HTMLElement.prototype.onEvent = function (eventName, callbackFn) {
+    let targetEvent = Object.values(eventsStore).find(
+      (e) => e.eventName === eventName
+    );
+    if (!targetEvent) {
+      throw new Error(
+        `Event "${eventName}" does not exist. Please create it using eventCreator method before using it.`
+      );
+    }
+    targetEvent.callbacks.add(() => callbackFn(targetEvent.data));
   };
 
   // define event dispatching method
   const eventDispatcher = (oldState, newState) => {
-    const stateKeyEventNamePairs = generateEventNames(store);
+    // refresh events data
+    // autoGenerateStateEvents();
+
+    // get mutated state's key
+    let changedStateKey = compareStates(oldState, newState);
+
     Object.keys(newState).forEach((stateKey) => {
       if (oldState[stateKey] !== newState[stateKey]) {
-        ZParent.dispatchEvent(eventsStore[stateKey]);
-
-        // todo: remove this log after debugging events
-        console.log('event triggered:', eventsStore[stateKey]);
-        // stateKeyEventNamePairs.forEach((pair) => {
-        //   if (pair.stateKey === stateKey) {
-        //     // Global event listener to capture onUserChanged event
-        //     document.addEventListener(pair.eventName, (e) => {
-        //       console.log('user change event detected globally');
-        //     });
-        //   }
-        // });
+        let eventKey = Object.keys(eventsStore).find(
+          (event) => event === changedStateKey
+        );
+        // console.log('event detected:', eventKey);
+        eventsStore[eventKey].callbacks.forEach((callbackFn) =>
+          callbackFn(eventsStore[eventKey].data)
+        );
       }
     });
   };
 
-  // deifne event creation method
-  const eventCreator = (stateKeyEventNamePair) => {
-    eventsStore[stateKeyEventNamePair.stateKey] = new CustomEvent(
-      stateKeyEventNamePair.eventName,
-      {
-        detail: {
-          message: 'This is additional data for a z event',
-        },
-        bubbles: true,
-        cancelable: true,
-        composed: false,
+  // simple comparison of the changes of the old state and the new state
+  const compareStates = (oldState, newState) => {
+    for (const key in newState) {
+      if (oldState[key] !== newState[key]) {
+        return key;
       }
-    );
+    }
+  };
+
+  // deifne event creation method
+  const eventCreator = (eventName, initialData) => {
+    const newEvent = {
+      eventName: eventName,
+      callbacks: new Set(),
+      data: initialData,
+    };
+    eventsStore[eventName] = newEvent;
+
+    // add and update store with new state for this event
+    setStore((previousStoreValue) => ({
+      ...previousStoreValue,
+      [eventName]: newEvent,
+    }));
   };
 
   // define helper function to generate event names from state object
@@ -65,12 +84,12 @@ export function useEventBus(ZParent, store) {
     let eventNamesArray = stateKeys.map((key) => {
       if (key.startsWith('$')) {
         let newKey = key.split('$')[1];
-        let newKeyFinal = newKey.charAt(0).toUpperCase() + newKey.slice(1);
-        let eventName = `on${newKeyFinal}Changed`;
+        let newKeyFinal = newKey.charAt(0).toLowerCase() + newKey.slice(1);
+        let eventName = `${newKeyFinal}Changed`;
         return { stateKey: key, eventName: eventName };
       } else {
-        let newKey = key.charAt(0).toUpperCase() + key.slice(1);
-        let eventName = `on${newKey}Changed`;
+        let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+        let eventName = `${newKey}Changed`;
         return { stateKey: key, eventName: eventName };
       }
     });
@@ -78,7 +97,7 @@ export function useEventBus(ZParent, store) {
   };
 
   // auto gen initialState events
-  autoGenerateInitialStateEvents();
+  autoGenerateStateEvents();
 
   // auto subscribe events to state changes
   const eventSubscriptionHandler = (oldState, newState) =>
