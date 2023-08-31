@@ -15,21 +15,30 @@ export function useEventBus(getStoreValue, setStore) {
       eventsStore[pair.stateKey] = newEvent;
     });
 
-    console.log('event store:', eventsStore);
+    // console.log('event store:', eventsStore);
+  };
+
+  const getEventData = (eventName) => {
+    autoGenerateStateEvents();
+
+    let target = Object.values(eventsStore).find(
+      (e) => e.eventName === eventName
+    );
+
+    return target;
   };
 
   // Todo: make the onEvent method to have updated data always
   // bind onEvent method to all html elements
   HTMLElement.prototype.onEvent = function (eventName, callbackFn) {
-    let targetEvent = Object.values(eventsStore).find(
-      (e) => e.eventName === eventName
-    );
+    let targetEvent = getEventData(eventName);
+
     if (!targetEvent) {
       throw new Error(
         `Event "${eventName}" does not exist. Please create it using eventCreator method before using it.`
       );
     }
-    targetEvent.callbacks.add(() => callbackFn(targetEvent.data));
+    targetEvent.callbacks.add(() => callbackFn(getEventData(eventName).data));
   };
 
   // define event dispatching method
