@@ -29,12 +29,11 @@ export function useStore(initialState) {
     if (_deepObjectCompare(getPrevStoreValue(), getNextStoreValue())) {
       return;
     } else {
-      store = getNextStoreValue();
+      let oldState = getPrevStoreValue();
+      let latestState = getNextStoreValue();
+      store = { ...oldState, ...latestState };
       let callback = () =>
-        eventManager.eventSubscriptionHandler(
-          getPrevStoreValue(),
-          getNextStoreValue()
-        );
+        eventManager.eventSubscriptionHandler(oldState, latestState);
       subscribe(callback);
     }
 

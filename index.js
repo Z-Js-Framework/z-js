@@ -13,6 +13,7 @@ const todosList = document.querySelector('.todos-list');
 // initialize Z instance with parent element and app state or initialState
 const Z = new ZPage(homePage, APP_STATE);
 
+// Todo: add optional local state persistence ability
 // get state methods
 const { state, setState, getState, eventManager } = Z.stateManager();
 console.log('Initial App State:', state);
@@ -27,8 +28,8 @@ addTodoButton.addEventListener('click', (e) => {
 // listen for cliek event and remove all todos by setting state
 resetTodoButton.addEventListener('click', (e) => {
   setState((prevState) => ({
-    ...prevState,
     $todos: [
+      ...prevState.$todos,
       {
         id: 3,
         task: 'write some code!',
@@ -74,5 +75,3 @@ Z.useEvent('todosChanged', (data) => {
 // Z.log();
 
 // Todo: make a z load into method and z use template for loop method
-// Todo: remove need for spreading state while updating it
-// Todo: add in custom effects to gracefully handle effects when state changes
