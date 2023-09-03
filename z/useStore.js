@@ -1,5 +1,6 @@
 import { syncLocalStorage } from './syncLocalStorage.js';
 import { useEventBus } from './useEventBus.js';
+import { _deepObjectCompare } from './utilities.js';
 
 export function useStore(initialState) {
   // sync and return the initial localStorage state
@@ -15,34 +16,26 @@ export function useStore(initialState) {
   // store modifying method
   // notice newState can be object or function that returns a new state object
   const setStore = (newState) => {
-    let prevStoreValue = store;
-    let nextStoreValue = {};
-
-    if (typeof newState === 'function') {
-      nextStoreValue = newState(prevStoreValue);
-
-      // don't modify state if nothing changed and subscribe event and state
-      if (prevStoreValue === nextStoreValue) {
-        return;
+    let getPrevStoreValue = getStoreValue;
+    let getNextStoreValue = () => {
+      if (typeof newState === 'function') {
+        return newState(getPrevStoreValue());
       } else {
-        store = nextStoreValue;
-        let callback = () =>
-          eventManager.eventSubscriptionHandler(prevStoreValue, store);
-        subscribe(newState);
-        subscribe(callback);
+        return newState;
       }
+    };
+
+    // don't modify state if nothing changed and subscribe event and state
+    if (_deepObjectCompare(getPrevStoreValue(), getNextStoreValue())) {
+      return;
     } else {
-      nextStoreValue = newState;
-
-      // still don't modify state if nothing changed and subscribe event only
-      if (prevStoreValue === nextStoreValue) {
-        return;
-      } else {
-        store = nextStoreValue;
-        let callback = () =>
-          eventManager.eventSubscriptionHandler(prevStoreValue, store);
-        subscribe(callback);
-      }
+      store = getNextStoreValue();
+      let callback = () =>
+        eventManager.eventSubscriptionHandler(
+          getPrevStoreValue(),
+          getNextStoreValue()
+        );
+      subscribe(callback);
     }
 
     // sync store with local storage and notify all listeners of the changes in store!

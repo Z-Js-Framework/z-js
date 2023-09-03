@@ -63,10 +63,67 @@ export function _focusNextTab() {
   }
 }
 
-function _isUserOnline() {
-  if (navigator.onLine) {
-    return true;
-  } else {
+export function _isUserOnline() {
+  return navigator.onLine;
+}
+
+// utility function to compare objects say state objects to determine if they're same -- consider using utility libs like lodash, this can stack overflow and loop infinitely for circular refrences!
+export function _deepObjectCompare(obj1, obj2) {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  // Check if the objects have the same keys
+  if (
+    keys1.length !== keys2.length ||
+    !keys1.every((key) => keys2.includes(key))
+  ) {
     return false;
   }
+
+  // Perform deep comparison for each key
+  return keys1.every((key) => {
+    const value1 = obj1[key];
+    const value2 = obj2[key];
+
+    if (typeof value1 === 'object' && value1 !== null) {
+      return _deepObjectCompare(value1, value2);
+    } else {
+      return value1 === value2;
+    }
+  });
 }
+
+// test the compare function utility
+// let object1 = {
+//   appLoading: false,
+//   count: 0,
+//   $user: 'Kizz',
+//   $todos: [
+//     {
+//       id: 1,
+//       task: 'feed the cat!',
+//       completed: true,
+//     },
+//     {
+//       id: 2,
+//       task: 'go to the gym',
+//       completed: false,
+//     },
+//   ],
+// };
+
+// let object2 = {
+//   appLoading: false,
+//   count: 0,
+//   $user: 'Kizz',
+//   $todos: [
+//     {
+//       id: 3,
+//       task: 'write some code!',
+//       completed: false,
+//     },
+//   ],
+// };
+
+// let areEqual = _deepObjectCompare(object2, object2);
+// console.log('areEqual:', areEqual);
