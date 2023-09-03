@@ -29,6 +29,9 @@ export default function ZPage(parentElement, appState) {
     console.log('What is rendered by Z Framework:', ZParent);
   };
 
+  const useEvent = (eventName, callbackFn) =>
+    eventManager.addNewListener(eventName, callbackFn);
+
   // sets the page parent element explicitly
   const setParent = (parentElement) => {
     ZParent = parentElement;
@@ -80,5 +83,14 @@ export default function ZPage(parentElement, appState) {
   };
 
   // Z funtion exports exposed with Z.method syntax
-  return { log, setParent, replace, append, render, showLoader, stateManager };
+  return {
+    log,
+    setParent,
+    replace,
+    append,
+    render,
+    showLoader,
+    stateManager,
+    useEvent,
+  };
 }

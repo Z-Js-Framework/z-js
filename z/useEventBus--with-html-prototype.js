@@ -9,7 +9,7 @@ export function useEventBus(getStoreValue, setStore) {
     stateKeyEventNamePairs.forEach((pair) => {
       let newEvent = {
         eventName: pair.eventName,
-        callbacks: [],
+        callbacks: new Set(),
         data: store[pair.stateKey],
       };
       eventsStore[pair.stateKey] = newEvent;
@@ -28,33 +28,19 @@ export function useEventBus(getStoreValue, setStore) {
     return target;
   };
 
-  // this temporary store of callbacks needed to make this work
-  const callbackStore = {};
-  let counter = 0;
+  // Todo: make the onEvent method to have updated data always
+  // bind onEvent method to all html elements
+  const bindEvents = () => {
+    HTMLElement.prototype.onEvent = function (eventName, callbackFn) {
+      let targetEvent = getEventData(eventName);
 
-  // define event listener callback registering function
-  const addNewListener = (eventName, callbackFn) => {
-    let targetEvent = getEventData(eventName);
-
-    if (!targetEvent) {
-      throw new Error(
-        `Event "${eventName}" does not exist. Please create it using eventCreator method before using it or create new state item.`
-      );
-    }
-
-    // generate unique keys for every callback reference
-    function generateUniqueKey() {
-      const uniqueKey = `callback_${counter}`;
-      counter++; // Increment the counter
-      return uniqueKey;
-    }
-
-    callbackStore[generateUniqueKey()] = (data) => callbackFn(data);
-    let newCallbacks = Object.values(callbackStore);
-    // console.log(newCallbacks);
-
-    // update target's callbacks array or listeners
-    targetEvent.callbacks = newCallbacks;
+      if (!targetEvent) {
+        throw new Error(
+          `Event "${eventName}" does not exist. Please create it using eventCreator method before using it.`
+        );
+      }
+      targetEvent.callbacks.add(() => callbackFn(getEventData(eventName).data));
+    };
   };
 
   // define event dispatching method
@@ -67,10 +53,7 @@ export function useEventBus(getStoreValue, setStore) {
         let eventKey = Object.keys(eventsStore).find(
           (event) => event === changedStateKey
         );
-        // refresh the events store with new event data
-        eventsStore[eventKey].data = newState[changedStateKey];
-
-        // notify all event listener callbacks
+        // console.log('event detected:', eventKey);
         eventsStore[eventKey].callbacks.forEach((callbackFn) =>
           callbackFn(eventsStore[eventKey].data)
         );
@@ -91,7 +74,7 @@ export function useEventBus(getStoreValue, setStore) {
   const eventCreator = (eventName, initialData) => {
     const newEvent = {
       eventName: eventName,
-      callbacks: [],
+      callbacks: new Set(),
       data: initialData,
     };
     eventsStore[eventName] = newEvent;
@@ -123,6 +106,7 @@ export function useEventBus(getStoreValue, setStore) {
 
   // auto gen initialState events
   autoGenerateStateEvents();
+  bindEvents();
 
   // auto subscribe events to state changes
   const eventSubscriptionHandler = (oldState, newState) =>
@@ -131,7 +115,6 @@ export function useEventBus(getStoreValue, setStore) {
   // use event bus function exports
   return {
     eventsStore,
-    addNewListener,
     eventCreator,
     eventDispatcher,
     eventSubscriptionHandler,
