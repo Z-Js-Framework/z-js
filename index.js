@@ -1,7 +1,7 @@
 import { APP_STATE } from './app-state.js';
 import { Loader } from './components/loader.js';
 import { TodoItemTemplate } from './components/todo-item.js';
-import ZPage from './z/z.js';
+import ZEngine from './z/z.js';
 
 // get all elements you want to work with in your Js
 const homePage = document.querySelector('#homePage');
@@ -10,12 +10,17 @@ const resetTodoButton = document.querySelector('#resetTodoButton');
 const UsernameElement = document.querySelector('.username');
 const todosList = document.querySelector('.todos-list');
 
-// initialize Z instance with parent element and app state or initialState
-const Z = new ZPage(homePage, APP_STATE);
+// initialize Z instance with parent element or your main app wrapper eg. body
+const Z = new ZEngine(homePage);
 
-// Todo: add optional local state persistence ability
-// get state methods
-const { state, setState, getState, eventManager } = Z.stateManager();
+// get state methods and intialize Z state manager with intial state
+// set persistStates to true to share state across your application pages and even when page reloads -- uses local storage
+const { state, setState, getState } = Z.stateManager({
+  initialState: APP_STATE,
+  persistStates: false,
+});
+
+// try to log app state using state method!
 console.log('Initial App State:', state);
 
 // supposed to add a todo but well changes username

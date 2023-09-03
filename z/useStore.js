@@ -2,13 +2,16 @@ import { syncLocalStorage } from './syncLocalStorage.js';
 import { useEventBus } from './useEventBus.js';
 import { _deepObjectCompare } from './utilities.js';
 
-export function useStore(initialState) {
-  // sync and return the initial localStorage state
-  // let localState = syncLocalStorage(initialState);
-
-  // define the store, local state overites any non local state
-  // let store = { ...initialState, ...localState };
+export function useStore(initialState, enableLocalStorage = false) {
   let store = initialState;
+
+  // sync and return the initial localStorage state
+  if (enableLocalStorage) {
+    alert('local storage enabled!');
+    let localState = syncLocalStorage(initialState);
+    // define the store, local state overites any non local state
+    store = { ...initialState, ...localState };
+  }
 
   // define state listeners
   const listeners = new Set();
@@ -38,7 +41,9 @@ export function useStore(initialState) {
     }
 
     // sync store with local storage and notify all listeners of the changes in store!
-    // syncLocalStorage(store);
+    if (enableLocalStorage) {
+      syncLocalStorage(getStoreValue());
+    }
     listeners.forEach((listener) => listener());
   };
 

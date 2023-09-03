@@ -1,26 +1,34 @@
-import { useEventBus } from './useEventBus.js';
 import { useStore } from './useStore.js';
 import { _getContent, _makeHtml } from './utilities.js';
 
 // Todo: accept element instead of element Id in methods!
 // Todo: handle component visibility change, a method to hide or show a component
 
-export default function ZPage(parentElement, appState) {
+export default function ZEngine(parentElement) {
   // we will do something with the parent element
   let ZParent = parentElement;
-
-  // intialize store and expose store methods
-  const { store, setStore, getStoreValue, eventManager } = useStore(appState);
+  let eventsHandler;
 
   // define main state manager!
-  const stateManager = () => {
+  const stateManager = (config) => {
+    let initialState = config.initialState;
+    let enableLocalStorage = config.persistStates;
+
+    // intialize store and expose store methods
+    const { store, setStore, getStoreValue, eventManager } = useStore(
+      initialState,
+      enableLocalStorage
+    );
+
+    // set state events handler
+    eventsHandler = eventManager;
+
     // do more stuff with state like hooking in events
 
     return {
       state: store,
       setState: setStore,
       getState: getStoreValue,
-      eventManager,
     };
   };
 
@@ -29,8 +37,12 @@ export default function ZPage(parentElement, appState) {
     console.log('What is rendered by Z Framework:', ZParent);
   };
 
-  const useEvent = (eventName, callbackFn) =>
-    eventManager.addNewListener(eventName, callbackFn);
+  // used function, arrow syntax was ambiguous here!
+  function useEvent(eventName, callbackFn) {
+    if (eventsHandler) {
+      return eventsHandler.addNewListener(eventName, callbackFn);
+    }
+  }
 
   // sets the page parent element explicitly
   const setParent = (parentElement) => {
