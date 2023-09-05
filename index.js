@@ -7,7 +7,9 @@ import ZEngine from './z/z.js';
 const homePage = document.querySelector('#homePage');
 const addTodoButton = document.querySelector('#addTodoButton');
 const resetTodoButton = document.querySelector('#resetTodoButton');
-const UsernameElement = document.querySelector('.username');
+const todoInput = document.querySelector('#todoInput');
+const usernameElement = document.querySelector('.username');
+const logOutButton = document.querySelector('.logout-button');
 const todosList = document.querySelector('.todos-list');
 
 // initialize Z instance with parent element or your main app wrapper eg. body
@@ -23,51 +25,60 @@ const { state, setState, getState } = Z.stateManager({
 // try to log app state using state method!
 console.log('Initial App State:', state);
 
-// supposed to add a todo but well changes username
-addTodoButton.addEventListener('click', (e) => {
+// HANDLE USER
+// log out current user
+logOutButton.addEventListener('click', () => {
   setState((prevState) => ({ ...prevState, $user: 'Javascript' }));
   let currentState = getState();
-  console.log('app state after change:', currentState);
+  console.log('app state after username change:', currentState);
 });
-
-// listen for cliek event and remove all todos by setting state
-resetTodoButton.addEventListener('click', (e) => {
-  setState((prevState) => ({
-    $todos: [
-      ...prevState.$todos,
-      {
-        id: 3,
-        task: 'write some code!',
-        completed: false,
-      },
-    ],
-  }));
-  let currentState = getState();
-  console.log('app state after change:', currentState);
-});
-
-let count = 0;
 
 // react to username changes
-Z.useEvent('todosChanged', (data) => {
-  console.log('todos change event detected, new todos 1:', data);
-  count++;
-  console.log('Thats called', count, 'times!');
+Z.useEvent('userChanged', (data) => {
+  // change user name to new user
+  console.log('user change detected, new username:', data);
+  usernameElement.textContent = `User: ${data}`;
 });
 
-// react to todo state change
-Z.useEvent('todosChanged', (data) => {
-  console.log('todos change event detected, new todos 2:', data);
-  Z.replace('myTodos', TodoItemTemplate);
-  count++;
-  console.log('Thats called', count, 'times!');
+// HANDLE TODOS
+// add a new todo on click of add todo
+addTodoButton.addEventListener('click', (e) => {
+  let currentState = getState();
+
+  // define new todo item
+  let newTodo = {
+    id: currentState.$todos.length + 1,
+    task: todoInput.value,
+    completed: false,
+  };
+
+  // set new item in state todos
+  if (todoInput.value) {
+    setState((prevState) => ({
+      $todos: [...prevState.$todos, newTodo],
+    }));
+  }
 });
 
+resetTodoButton.addEventListener('click', () => {
+  setState((prevState) => ({
+    ...prevState,
+    $todos: [],
+  }));
+});
+
+// react to todo state changes
 Z.useEvent('todosChanged', (data) => {
-  console.log('todos change event detected, new todos 3:', data);
+  console.log(
+    'todos change event detected, do something in diffrent parts of UI:',
+    data
+  );
+});
+
+// react to todo state changes anywhere
+Z.useEvent('todosChanged', (data) => {
+  console.log('todos change event detected, new todos:', data);
   Z.replace('myTodos', TodoItemTemplate);
-  count++;
-  console.log('Thats called', count, 'times!');
 });
 
 // Z.replace(myAppId, Header({ username: 'Kizz' }));

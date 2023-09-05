@@ -40,7 +40,7 @@ export default function ZEngine(parentElement) {
   // used function, arrow syntax was ambiguous here!
   function useEvent(eventName, callbackFn) {
     if (eventsHandler) {
-      return eventsHandler.addNewListener(eventName, callbackFn);
+      eventsHandler.addNewListener(eventName, callbackFn);
     }
   }
 

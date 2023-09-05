@@ -28,33 +28,14 @@ export function useEventBus(getStoreValue, setStore) {
     return target;
   };
 
-  // this temporary store of callbacks needed to make this work
-  const callbackStore = {};
-  let counter = 0;
-
   // define event listener callback registering function
   const addNewListener = (eventName, callbackFn) => {
-    let targetEvent = getEventData(eventName);
-
-    if (!targetEvent) {
-      throw new Error(
-        `Event "${eventName}" does not exist. Please create it using eventCreator method before using it or create new state item.`
-      );
-    }
-
-    // generate unique keys for every callback reference
-    function generateUniqueKey() {
-      const uniqueKey = `callback_${counter}`;
-      counter++; // Increment the counter
-      return uniqueKey;
-    }
-
-    callbackStore[generateUniqueKey()] = (data) => callbackFn(data);
-    let newCallbacks = Object.values(callbackStore);
-    // console.log(newCallbacks);
-
-    // update target's callbacks array or listeners
-    targetEvent.callbacks = newCallbacks;
+    Object.keys(eventsStore).forEach((key) => {
+      if (eventsStore[key].eventName === eventName) {
+        eventsStore[key].callbacks.push(callbackFn);
+      }
+    });
+    // console.log('Event Store:', eventsStore);
   };
 
   // define event dispatching method
@@ -69,11 +50,13 @@ export function useEventBus(getStoreValue, setStore) {
         );
         // refresh the events store with new event data
         eventsStore[eventKey].data = newState[changedStateKey];
+        // console.log('from event dispatch:', eventsStore);
 
         // notify all event listener callbacks
-        eventsStore[eventKey].callbacks.forEach((callbackFn) =>
-          callbackFn(eventsStore[eventKey].data)
-        );
+        eventsStore[eventKey].callbacks.forEach((callbackFn) => {
+          // console.log('data to fn:', eventsStore[eventKey].data);
+          callbackFn(eventsStore[eventKey].data);
+        });
       }
     });
   };
