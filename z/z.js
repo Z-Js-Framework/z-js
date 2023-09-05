@@ -73,7 +73,7 @@ export default function ZEngine(parentElement) {
 
     let newContent = _getContent(component);
 
-    if (order === 'after') {
+    if (order === 'after:') {
       element.appendChild(_makeHtml(newContent));
     } else {
       // append new content element to before the current in elements

@@ -12,59 +12,130 @@ Basically just create 3 files initially, `index.js`, `index.html` and maybe also
 This is all plain js and html just using js template literals, it's not `react`, we just using module syntax that allows us to import these templates as if components simillar to react, but notice their no build tools or bundlers or whatever yet here, and funny enough, it works!
 
 ``` js
-// in components/header.js
-export const Header = (props) => {
-  let userName = props.username ? props.username : 'John Doe!';
+// in components/todo-item.js
+export const TodoItemsTemplate = (data) => {
+  // do anythig with data like creating a todos markup array
+  let todosList = data.map((todoItem) => {
+    return `
+     <div class="todo-item">
+          <input type="checkbox" name="todoCheck" id="todoCheck" ${
+            todoItem.completed ? 'checked' : null
+          }>
+          <span>${todoItem.task}</span>
+          <button class="edit-button">edit</button>
+          <button class="delete-button">delete</button>
+        </div>
+  `;
+  });
 
-  return `<header>
-    <nav>
-      <h1>Z.Js</h1>
-      <p>User: ${userName}</p>
-    </nav>
-  </header>`;
-};
-```
-
-and footer then footer.js looks like:
-
-``` js
-// in components/footer.js
-export const Footer = (props) => {
-  return `<footer>
-    <div>
-      <p>copy; 2023 Z Js</p>
-    </div>
-  </footer>`;
+  // return new todos list
+  return todosList;
 };
 
 ```
 
-then all handled in `index.js` as below for example:
+then everything else predictably handled in `index.js` as below for example:
 
 ``` js
 // in index.js
-import { Header } from './components/header.js';
-import { Footer } from './components/footer.js';
-import Z from './z/index.js';
+import { APP_STATE } from './app-state.js';
+import { Loader } from './components/loader.js';
+import { TodoItemsTemplate } from './components/todo-item.js';
+import ZEngine from './z/z.js';
 
-const myApp = document.querySelector('#myApp');
+// get all elements you want to work with in your Js
+const homePage = document.querySelector('#homePage');
+const addTodoButton = document.querySelector('#addTodoButton');
+const resetAllTodosButton = document.querySelector('#resetTodoButton');
+const todoInput = document.querySelector('#todoInput');
+const usernameElement = document.querySelector('.username');
+const logOutButton = document.querySelector('.logout-button');
+const todosList = document.querySelector('.todos-list');
 
-// set the shell or main element eg. body
-Z.setParent(myApp);
+// initialize Z instance with parent element or your main app wrapper eg. body
+const Z = new ZEngine(homePage);
 
-let myAppId = 'myApp';
+// get state methods and intialize Z state manager with intial state
+// set persistStates to true to share state across your application pages and even when page reloads -- uses local storage
+const { state, setState, getState } = Z.stateManager({
+  initialState: APP_STATE,
+  persistStates: false,
+});
 
-// start rendering stuff
-window.onload = () => {
-  console.log('Am index and then comes Z');
-  Z.replace(myAppId, Header({ username: 'kizz' }));
-  Z.append('after', myAppId, Footer());
-};
+// try to log app state using state method!
+console.log('Initial App State:', state);
+
+// HANDLE USER
+// log out current user
+logOutButton.addEventListener('click', () => {
+  setState((prevState) => ({ ...prevState, $user: 'Javascript' }));
+  let currentState = getState();
+  console.log('app state after username change:', currentState);
+});
+
+// react to username changes
+Z.useEvent('userChanged', (data) => {
+  // change user name to new user
+  console.log('user change detected, new username:', data);
+  usernameElement.textContent = `User: ${data}`;
+});
+
+// HANDLE TODOS
+// render intial todos
+Z.render('myTodos', TodoItemsTemplate(state.$todos));
+
+// add a new todo on click of add todo
+addTodoButton.addEventListener('click', (e) => {
+  let currentState = getState();
+
+  // define new todo item
+  let newTodo = {
+    id: currentState.$todos.length + 1,
+    task: todoInput.value,
+    completed: false,
+  };
+
+  // set new item in state todos
+  if (todoInput.value) {
+    setState((prevState) => ({
+      $todos: [...prevState.$todos, newTodo],
+    }));
+  }
+});
+
+// remover, delete or reset all todos on click of reset todos
+resetAllTodosButton.addEventListener('click', () => {
+  setState((prevState) => ({
+    ...prevState,
+    $todos: [],
+  }));
+
+  // you can also manually change stuff as you like
+  let myHtml = `<div class="todo-item">
+          <span>🐱 all todos deleted!</span>
+        </div>`;
+  let myTodos = document.querySelector('#myTodos');
+  myTodos.innerHTML = myHtml;
+});
+
+// or promptly listen for todos state change event and automatically react to changes anywhere in your code
+Z.useEvent('todosChanged', (data) => {
+  console.log('todos change event detected, new todos:', data);
+  Z.render('myTodos', TodoItemsTemplate(data));
+});
+
+// Z.replace(myAppId, Header({ username: 'Kizz' }));
+// Z.append('after', myAppId, Footer);
+
+// show a splash screen loader for 2 milli seconds
+Z.showLoader(Loader, 2000);
+
+// optional, logs whatever Z rendered in broswer to the console
+// Z.log();
 
 ```
 
-And the Z class or instance is an abstraction to handle all the dynamic renderings of your application, states, and etc.
-
+And all above is just js, no dependencies, no react, just the Z class or instance is an abstraction to handle all the dynamic renderings of your application, states, and etc.
 
 ## What Next?
 

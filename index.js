@@ -1,12 +1,12 @@
 import { APP_STATE } from './app-state.js';
 import { Loader } from './components/loader.js';
-import { TodoItemTemplate } from './components/todo-item.js';
+import { TodoItemsTemplate } from './components/todo-item.js';
 import ZEngine from './z/z.js';
 
 // get all elements you want to work with in your Js
 const homePage = document.querySelector('#homePage');
 const addTodoButton = document.querySelector('#addTodoButton');
-const resetTodoButton = document.querySelector('#resetTodoButton');
+const resetAllTodosButton = document.querySelector('#resetTodoButton');
 const todoInput = document.querySelector('#todoInput');
 const usernameElement = document.querySelector('.username');
 const logOutButton = document.querySelector('.logout-button');
@@ -41,6 +41,9 @@ Z.useEvent('userChanged', (data) => {
 });
 
 // HANDLE TODOS
+// render intial todos
+Z.render('myTodos', TodoItemsTemplate(state.$todos));
+
 // add a new todo on click of add todo
 addTodoButton.addEventListener('click', (e) => {
   let currentState = getState();
@@ -60,34 +63,34 @@ addTodoButton.addEventListener('click', (e) => {
   }
 });
 
-resetTodoButton.addEventListener('click', () => {
+// remover, delete or reset all todos on click of reset todos
+resetAllTodosButton.addEventListener('click', () => {
   setState((prevState) => ({
     ...prevState,
     $todos: [],
   }));
+
+  // you can also manually change stuff as you like
+  let myHtml = `<div class="todo-item">
+          <span>🐱 all todos deleted!</span>
+        </div>`;
+  let myTodos = document.querySelector('#myTodos');
+  myTodos.innerHTML = myHtml;
 });
 
-// react to todo state changes
-Z.useEvent('todosChanged', (data) => {
-  console.log(
-    'todos change event detected, do something in diffrent parts of UI:',
-    data
-  );
-});
-
-// react to todo state changes anywhere
+// or promptly listen for todos state change event and automatically react to changes anywhere in your code
 Z.useEvent('todosChanged', (data) => {
   console.log('todos change event detected, new todos:', data);
-  Z.replace('myTodos', TodoItemTemplate);
+  Z.render('myTodos', TodoItemsTemplate(data));
 });
 
 // Z.replace(myAppId, Header({ username: 'Kizz' }));
 // Z.append('after', myAppId, Footer);
 
 // show a splash screen loader for 2 milli seconds
-// Z.showLoader(Loader, 2000);
+Z.showLoader(Loader, 2000);
 
 // optional, logs whatever Z rendered in broswer to the console
 // Z.log();
 
-// Todo: make a z load into method and z use template for loop method
+// Todo: make a z load into or insert method and z use template for loop method
