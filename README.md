@@ -5,11 +5,29 @@ A simple almost html based js framework!
 
 We needed something very simple but can make a plain html, css and js project have a modern like developer experience and be scalable and yet has the power of single page applications (SPAs) or not to say, react applications. Nothing fancy, just the bare minimum, we capitalize on intuitve architecture, native web platform features and principles instead of a bunch of libs, meta frameworks etc that newer devs are even not familiar with usually. Here if know html, and some js, you can still make a great app, with only that you know!
 
+
+## Roadmap If You Like To Contribute
+
+- ✅ Define framework usage and semantic basics
+- ✅ Create a custom state management mechanism
+- ✅ Create a simple way to persist state -- used local storage
+- ✅ Create a custom events like system for reactive UI updates
+- ✅ Create main Z function to bring everything together
+- ✅ Create basic UI manipulating methods
+- 🔳 Share state across different html pages
+- 🔳 Handle multi pages and routing -- just enhance normal behaviors
+- 🔳 Add in page transition and component transition animations
+- 🔳 Add builtin data fetching mechanism
+- 🔳 Enhance documentation
+- 🔳 Introduce build tools, bundlers and Js doc and ship this to npm!
+
+what else?
+
 ## How it works?
 
-Basically just create 3 files initially, `index.js`, `index.html` and maybe also a style.css file if you like, then a components folder to keep your html strings as compoents, then bring in `z.js` and you good to go, no npm package for now, it will just be a single file for now, try the whole thing here: [ Try Z.Js On Gitpod](https://gitpod.io#snapshot/b9a123b5-4b7d-41dc-8e8c-7db2f109f096)
+Basically just create 3 files initially, `index.js`, `index.html` and maybe also a style.css file if you like, then a components folder to keep your html strings as compoents, then bring in `z.js` and you good to go, no npm package for now ok we have name for it on npm just to secure the package name but haven't packaged it to be consumed as npm package yet, but feel free to clone repo or just download the z.js directory into your project and everything will work as you see in example given below, it's still much work in progress and need contributions but for now, you can try the whole thing here: [ Try Z.Js On Gitpod](https://gitpod.io#snapshot/b9a123b5-4b7d-41dc-8e8c-7db2f109f096)
 
-This is all plain js and html just using js template literals, it's not `react`, we just using module syntax that allows us to import these templates as if components simillar to react, but notice their no build tools or bundlers or whatever yet here, and funny enough, it works!
+This is all plain js and html just using js template literals, it's not `react`, we just using module syntax that allows us to import these templates as if components simillar to react, but notice their no build tools or bundlers or whatever yet here, and funny enough, it works as you can see below!
 
 ``` js
 // in components/todo-item.js
