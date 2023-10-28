@@ -94,6 +94,10 @@ main {
   font-weight: 600;
 }
 
+.todo-item {
+  margin-top: 0.5rem;
+}
+
 button,
 input {
   padding-inline: 5px;

@@ -127,3 +127,17 @@ export function _deepObjectCompare(obj1, obj2) {
 
 // let areEqual = _deepObjectCompare(object2, object2);
 // console.log('areEqual:', areEqual);
+
+/**
+ * @kind Custom Utility
+ * @param {*}  - can take expressions, strings etc as the standard console.log
+ * @extends console.log builtin method
+ * @example print('Hello World!'); // prints 'Hello World!'
+ *  */
+
+export function print() {
+  return console.log;
+}
+// let name = 'kizz';
+
+// print(`Hello ${name}`, 1 + 2);

@@ -1,0 +1,27 @@
+<style>
+  .todo-item {
+    color: red;
+  }
+</style>
+
+<script>
+  const data = {
+    userName: $userName,
+    todoItem: todoItem,
+    edit: (id) => onEdit(id),
+    delete: (id) => onDelete(id)
+  }
+</script>
+
+<template>
+  <div class="todo-item">
+    <input type="checkbox" name="todoCheck" id="todoCheck" ${data.todoItem.completed ? 'checked' : null }>
+    <span>${data.todoItem.task}</span>
+    <button class="edit-button" onclick="data.edit(data.todoItem.id)">
+      edit todo
+    </button>
+    <button class="delete-button" onclick="data.delete(data.todoItem.id)">
+      delete todo
+    </button>
+  </div>
+</template>

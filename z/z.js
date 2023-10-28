@@ -94,6 +94,12 @@ export default function ZEngine(parentElement) {
     }, duration);
   };
 
+  // try html templating
+  const html = (component) => {
+    let newContent = _getContent(component);
+    return newContent;
+  };
+
   // Z funtion exports exposed with Z.method syntax
   return {
     log,
@@ -104,5 +110,6 @@ export default function ZEngine(parentElement) {
     showLoader,
     stateManager,
     useEvent,
+    html,
   };
 }
