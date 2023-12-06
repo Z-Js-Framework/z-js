@@ -16,4 +16,4 @@ let data = {
   },
 };
 
-render(parentElement, 'component1.html', data);
+render(parentElement, 'component.html', data);

@@ -5,14 +5,14 @@
 </style>
 
 <template>
-  <div class="todo-item">
-    <input type="checkbox" name="todoCheck" id="todoCheck" {data.todoItem.completed ? 'checked' : null }>
+  <todo-item class="todo-item">
+    <input type="checkbox" name="todoCheck" id="todoCheck" data-checked="{data.todoItem.completed}">
     <span>{data.todoItem.task}</span>
-    <button class="edit-button" onclick="{data.edit(data.todoItem.id)}">
+    <button class="edit-button" data-action="edit" data-id="{data.todoItem.id}">
       edit todo
     </button>
-    <button class="delete-button" onclick="{data.delete(data.todoItem.id)}">
+    <button class="delete-button" data-action="delete" data-id="{data.todoItem.id}">
       delete todo
     </button>
-  </div>
+  </todo-item>
 </template>

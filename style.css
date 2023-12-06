@@ -9,6 +9,7 @@
 
 body {
   width: 100%;
+  padding: 2rem;
   min-height: 100dvh;
   font-family: 'Courier New', Courier, monospace;
   accent-color: var(--z-color);
