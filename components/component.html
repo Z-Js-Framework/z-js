@@ -1,4 +1,18 @@
-<template id="1" class="my-component">
-  <p>are you freakin serious?</p>
-  <p>this is freakin client side rendering oops!</p>
+<style>
+  .todo-item {
+    color: red;
+  }
+</style>
+
+<template>
+  <div class="todo-item">
+    <input type="checkbox" name="todoCheck" id="todoCheck" {data.todoItem.completed ? 'checked' : null }>
+    <span>{data.todoItem.task}</span>
+    <button class="edit-button" onclick="{data.edit(data.todoItem.id)}">
+      edit todo
+    </button>
+    <button class="delete-button" onclick="{data.delete(data.todoItem.id)}">
+      delete todo
+    </button>
+  </div>
 </template>
