@@ -1,0 +1,99 @@
+body {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 500;
+}
+
+button {
+  will-change: auto;
+}
+
+button:active {
+  transition: all 0.3s ease-in-out;
+  transform: scale(0.96);
+}
+
+.container {
+  width: 100%;
+  max-width: 100dvh;
+  margin: 0 auto;
+}
+
+.todos {
+  top: 25vh;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: #f6f6f2;
+  padding: 2rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.flex {
+  width: 100%;
+  gap: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-simple {
+  gap: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todos-list {
+  margin-top: 2rem;
+  border-bottom: 1px solid rgb(202, 222, 184);
+  padding-block: 0.5rem;
+}
+
+button.edit {
+  color: rgb(0, 0, 192);
+}
+button.delete {
+  color: rgb(250, 54, 54);
+}
+button.archive {
+  color: rgb(29, 174, 4);
+}
+
+button.active {
+  background: rgb(167, 169, 166);
+  color: rgb(21, 55, 18);
+  border: 2px solid gray;
+}
+
+input {
+  padding-block: 0.5rem;
+  padding-inline: 0.5rem;
+}
+
+input.username {
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid black;
+  text-transform: capitalize;
+  outline: none;
+
+  &:hover,
+  &:active,
+  &:focus-visible {
+    border: none;
+    border-bottom: 2px solid black;
+  }
+}
+
+input.add-todo {
+  width: 80%;
+  color: rgb(95, 125, 96);
+}
+
+button.add-todo {
+  padding-block: 0.5rem;
+  padding-inline: 0.5rem;
+  color: rgb(95, 125, 96);
+  width: 100px;
+}
