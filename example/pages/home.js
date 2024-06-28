@@ -22,6 +22,15 @@ export default function Home() {
     color: tomato;
   `;
 
+  const flexItem = css`
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1rem;
+    margin-block: 2rem;
+  `;
+
   const home = html`<div>
     <h1>${userName.value}</h1>
     <p id="count">count: ${count.value}</p>
@@ -32,6 +41,12 @@ export default function Home() {
       onInput="${handleInput}" />
     <!-- Button Component Usage -->
     <div class="flex-item">${Button('+ Add One', setCount)}</div>
+    <div class="${flexItem}">
+      <a href="/home">Home</a>
+      <a href="/about">About</a>
+      <a href="/layout">Layout</a>
+      <a href="https://www.google.com">Google</a>
+    </div>
   </div>`;
 
   useEffect(() => {
