@@ -1,116 +1,144 @@
 import { render } from '../rendering/index.js';
 
-export const useRouter = (config = {}) => {
-  // let parent = document.body;
-  let parent = config.parent || document.body;
-  let routes = config.routes || [];
-  let initialDelay = config.initialDelay || 0;
+class ZLink extends HTMLElement {
+  connectedCallback() {
+    this.addEventListener('click', this._handleClick);
+    this.style.cursor = 'pointer';
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click', this._handleClick);
+  }
+
+  _handleClick = (e) => {
+    e.preventDefault();
+    const path = this.getAttribute('to') || '/';
+    const target = this.getAttribute('target');
+    const event = new CustomEvent('z-navigate', {
+      bubbles: true,
+      detail: { path, target },
+    });
+    this.dispatchEvent(event);
+  };
+}
+
+customElements.define('z-link', ZLink);
+
+export function Router(config = {}) {
+  const parent = config.parent || document.body;
+  const routes = config.routes || [];
+  const initialDelay = config.initialDelay || 0;
   let currentRoute = null;
 
-  const navigate = (urlPath = '', options = {}) => {
-    let renderTarget = options.target || null;
-    let routeCompoment = routes.find((r) => r.route === urlPath);
-    let renderComponent = options.component || routeCompoment || null;
+  const findMatchingRoute = (urlPath) => {
+    // Remove leading slash if present
+    const path = urlPath.startsWith('/') ? urlPath : `/${urlPath}`;
+
+    // Check if the path ends with 'index.html' and route to home if it does
+    if (path.endsWith('/index.html')) {
+      return routes.find((r) => r.route === '/');
+    }
+
+    const exactMatch = routes.find((r) => r.route === path);
+    if (exactMatch) return exactMatch;
+
+    const wildcardRoute = routes.find((r) => r.route === '/*');
+    return wildcardRoute;
+  };
+
+  const navigate = (urlPath, options = {}) => {
+    const renderTarget = options.target || parent;
+    const route = findMatchingRoute(urlPath);
+    const renderComponent = options.component || route?.component;
 
     if (renderComponent) {
-      if (renderTarget) {
-        history.pushState({}, '', urlPath);
-        render(renderTarget, renderComponent);
+      let navigatePath = urlPath.endsWith('/index.html') ? '/' : urlPath;
+      navigatePath = navigatePath.startsWith('/')
+        ? navigatePath
+        : `/${navigatePath}`;
+
+      if (options.replaceState) {
+        history.replaceState({}, '', navigatePath);
       } else {
-        history.pushState({}, '', urlPath);
-        render(parent, renderComponent);
+        history.pushState({}, '', navigatePath);
       }
-      currentRoute = urlPath;
+      render(renderTarget, renderComponent);
+      currentRoute = navigatePath;
     } else {
-      console.error(
-        'Z Router, No component or configured route found for route: ',
-        urlPath
-      );
+      console.error('Z Router: No component found for route:', urlPath);
     }
   };
 
-  const loadRouter = () => {
-    // handle when no routes
+  const handleNavigation = (e) => {
+    const { path, target } = e.detail;
+
+    toggleActiveLink(e.target);
+
+    if (target) {
+      const targetElement = document.getElementById(target);
+      if (targetElement) {
+        navigate(path, { target: targetElement });
+      } else {
+        console.error('Z Router: No target element found for route:', path);
+      }
+    } else {
+      navigate(path);
+    }
+  };
+
+  const toggleActiveLink = (activeLink) => {
+    parent.querySelectorAll('z-link').forEach((link) => {
+      link.classList.toggle('active', link === activeLink);
+    });
+  };
+
+  const attachLinkListeners = () => {
+    parent.addEventListener('z-navigate', handleNavigation);
+  };
+
+  const handlePopState = () => {
+    const path = window.location.pathname + window.location.search;
+    navigate(path, { replaceState: true });
+  };
+
+  const handleInitialRoute = () => {
+    const path = window.location.pathname + window.location.search;
+    navigate(path, { replaceState: true });
+  };
+
+  const initRouter = () => {
     if (routes.length === 0) {
-      console.error('Z Router, No routes configured');
+      console.error('Z Router: No routes configured');
       return;
     }
 
-    // attach routes to links
-    let links = parent.querySelectorAll('a');
-    links.forEach((link) => {
-      if (link.hasAttribute('no-mod') || !link.href.startsWith('/')) {
-        return;
-      }
+    attachLinkListeners();
+    window.addEventListener('popstate', handlePopState);
 
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        let linkUrl = link.href;
-        toggleActiveLink(links, link);
-        if (link.hasAttribute('target') && link.getAttribute('target')) {
-          let targetElement = document.getElementById(
-            link.getAttribute('target')
-          );
-          if (targetElement) {
-            render(targetElement, renderComponent);
-          } else {
-            console.error('Z Router, No target element found for link: ', link);
-          }
-        } else {
-          navigate(linkUrl);
-        }
-      });
-    });
-
-    const toggleActiveLink = (links, link) => {
-      links.forEach((_link) => {
-        if (_link.href !== link.href) {
-          _link.isActive = false;
-        }
-        link.isActive = true;
-      });
-    };
-
-    // navigate for initial
-    if (initialDelay !== 0) {
-      setTimeout(() => {
-        loadRouter();
-      }, initialDelay);
-    } else {
-      navigate(routes[0].route);
-    }
-
-    // handle popState
-    window.addEventListener('popstate', () => {
-      let route = window.location.pathname;
-      currentRoute = route;
-      navigate(currentRoute);
-    });
+    handleInitialRoute();
   };
 
   const getParam = (param) => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has(param)) {
-      return urlParams.get(param);
-    } else {
-      console.warn(`Param: ${param} not found in current url!`);
-      return null;
-    }
+    return urlParams.has(param) ? urlParams.get(param) : null;
   };
+
+  // Initialize router
+  if (initialDelay > 0) {
+    setTimeout(initRouter, initialDelay);
+  } else if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRouter);
+  } else {
+    initRouter();
+  }
 
   return {
     history: window.history,
     location: window.location,
-    goTo: (route) => navigate(route),
+    goTo: navigate,
     goBack: () => window.history.back(),
     goForward: () => window.history.forward(),
-    getParam: getParam,
-    loadRouter: loadRouter,
+    getParam,
+    reloadRouter: initRouter,
   };
-};
-
-// let route = {
-//   route: '/',
-//   component: null,
-//   options: {},
-// };
+}

@@ -1,36 +1,33 @@
 import { render as _render, html, css } from './src/rendering/index.js';
 import { useEffect, useState, store } from './src/store/index.js';
-import { useRouter } from './src/routing/router.js';
+import { Router } from './src/routing/router.js';
 
-let _routes = [];
-let _parent = null;
-let _initialDelay = 0;
 let _router = null;
 
-const render = (parentElement, routes = [], initialDelay = 0) => {
-  _parent = parentElement;
-  _routes = routes;
-  _initialDelay = initialDelay;
-
-  if (_routes.length === 0) {
+const render = (parentElement = null, routes = [], initialDelay = 0) => {
+  if (!parentElement) {
+    console.error("Root or parent element can't be empty, it is required!");
+    return;
+  }
+  if (routes.length === 0) {
     console.error("Routes can't be empty, at least one is required!");
     return;
   }
-  let initialRoute = _routes.find((r) => r.route === '/');
-  _render(_parent, initialRoute.component);
+
+  let initialRoute = routes.find((r) => r.route === '/');
+  _render(parentElement, initialRoute.component);
+
+  if (parentElement && routes.length > 0) {
+    _router = new Router({
+      routes: routes,
+      parent: parentElement,
+      initialDelay: initialDelay,
+    });
+  }
+
+  return _router;
 };
 
-if (_parent && _routes.length > 0) {
-  _router = useRouter({
-    routes: _routes,
-    parent: _parent,
-    initialDelay: _initialDelay,
-  });
-}
+const useRouter = () => _router;
 
-if (_router) {
-  _router.loadRouter();
-}
-const router = _router;
-
-export { render, html, css, useEffect, useState, store, router };
+export { render, html, css, useEffect, useState, store, useRouter };

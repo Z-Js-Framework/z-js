@@ -103,7 +103,11 @@ export function createElement(structure) {
   for (const [key, value] of Object.entries(attributes)) {
     if (key.startsWith('on')) {
       const eventType = key.slice(2).toLowerCase();
-      element.addEventListener(eventType, value);
+      if (eventType === 'change') {
+        element.addEventListener('input', value);
+      } else {
+        element.addEventListener(eventType, value);
+      }
     } else {
       element.setAttribute(key, value);
     }

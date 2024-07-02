@@ -4,7 +4,7 @@ You clone this repository, look around the markdown files around different direc
 
 Once you done picking something you would like to work on, do it, create a branch off main branch, push to it and then make a pull request, we will review it in no time and merge it in if it's ok, and that's it.
 
-Except z.js file and a few others, most files have where they belong in subsquent project directories so don't mind some redudant files at root for now, most will be removed soon!
+Except z.js file and a few others, most files have where they belong in subsquent project directories so don't mind some redudant files in some directories for now, most will be removed soon, especially those in experiments!
 
 with that said, welcome on board, just keep an eye on how we naming things and how project's structured, we quite want to stay consistent, thank you!
 

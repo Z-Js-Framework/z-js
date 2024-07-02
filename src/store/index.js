@@ -7,6 +7,10 @@ const { channels } = new StateRadio();
 export const store = channels;
 
 export function useEffect(newFn, dependentStateChannels) {
+  if (dependentStateChannels.length === 0) {
+    window.addEventListener('DOMContentLoaded', newFn());
+    return;
+  }
   dependentStateChannels.forEach((channel) => {
     // console.log('log::', channel);
     let targetChannel = store.getChannel(channel.id);
