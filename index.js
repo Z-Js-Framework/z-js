@@ -1,4 +1,4 @@
-import { render as _render, html, css } from './src/rendering/index.js';
+import { render as _render, html, $, css } from './src/rendering/index.js';
 import { useEffect, useState, store } from './src/store/index.js';
 import { Router } from './src/routing/router.js';
 
@@ -30,4 +30,4 @@ const render = (parentElement = null, routes = [], initialDelay = 0) => {
 
 const useRouter = () => _router;
 
-export { render, html, css, useEffect, useState, store, useRouter };
+export { render, html, $, css, useEffect, useState, store, useRouter };

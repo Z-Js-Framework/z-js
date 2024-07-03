@@ -1,7 +1,5 @@
 import { generateUniqueId } from '../utils/utilities.js';
 
-const trackedStates = new Set();
-
 /**
  * Processes a tagged template literal and returns an HTML element.
  *
@@ -13,7 +11,7 @@ export function html(strings, ...values) {
   // Store functions, states and elements separately for future use
   const functions = [];
   const elements = [];
-  trackedStates.clear();
+  const trackedStates = new Set();
 
   // Construct the full string from the template literal parts
   const fullString = strings.reduce((acc, str, i) => {
@@ -25,7 +23,7 @@ export function html(strings, ...values) {
       values[i].setAttribute('_id', uniqueId);
       return acc + str + `<div _id="${uniqueId}"></div>`;
     }
-    return acc + (values[i] !== undefined ? evalValue(values[i], str) : '');
+    return acc + str + (values[i] !== undefined ? evalValue(values[i]) : '');
   }, '');
 
   values.forEach((value, index) => {
@@ -44,20 +42,14 @@ export function html(strings, ...values) {
     }
   });
 
-  function evalValue(value, str) {
-    let newPartialString = str;
+  console.log('fullstring::', fullString);
+
+  function evalValue(value) {
     if (typeof value === 'object' && value.hasOwnProperty('value')) {
-      if (str.includes('stateful')) {
-        newPartialString = str.replace(
-          'stateful',
-          'stateful=' + `"${value.id}"`
-        );
-      }
       trackedStates.add(value);
-      console.log('stateful', newPartialString);
-      return newPartialString + value.current();
+      return value.value;
     } else {
-      return newPartialString + value;
+      return value;
     }
   }
 
@@ -65,12 +57,28 @@ export function html(strings, ...values) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(fullString, 'text/html');
   const rootElement = doc.body.firstChild;
-  const element = createElement(
+  const final = createElement(
     buildStructure(rootElement, functions, elements),
     trackedStates
   );
 
-  return element;
+  if (trackedStates && trackedStates.size > 0) {
+    trackedStates.forEach((state) => {
+      state.subscribe(() => {
+        console.log('state changed, re-rendering:', state.elementInDom);
+        console.log(
+          'el in dom',
+          document.querySelector(`[_id="${state.elementInDom}"]`)
+        );
+        let newElement = createElement(
+          buildStructure(rootElement, functions, elements),
+          trackedStates
+        );
+        console.log('new element:', newElement);
+      });
+    });
+  }
+  return final;
 }
 
 /**
@@ -187,27 +195,4 @@ function extractAttributes(element, functions, elements) {
     }
   });
   return attributes;
-}
-
-export function $(htmlFn) {
-  const dom = htmlFn();
-  console.log('states::', trackedStates);
-  if (trackedStates && trackedStates.size > 0) {
-    trackedStates.forEach((state) => {
-      state.subscribe(() => {
-        console.log('state changed, re-rendering:', state.elementInDom);
-
-        let target = document.querySelector(`[_id="${state.elementInDom}"]`);
-
-        let newElement = htmlFn();
-        console.log('new element:', newElement);
-        if (target) {
-          target.replaceWith(newElement);
-        } else {
-          console.error('component not found when re-rendering!');
-        }
-      });
-    });
-  }
-  return dom;
 }

@@ -25,7 +25,7 @@ export function html(strings, ...values) {
       values[i].setAttribute('_id', uniqueId);
       return acc + str + `<div _id="${uniqueId}"></div>`;
     }
-    return acc + (values[i] !== undefined ? evalValue(values[i], str) : '');
+    return acc + str + (values[i] !== undefined ? evalValue(values[i]) : '');
   }, '');
 
   values.forEach((value, index) => {
@@ -44,20 +44,12 @@ export function html(strings, ...values) {
     }
   });
 
-  function evalValue(value, str) {
-    let newPartialString = str;
+  function evalValue(value) {
     if (typeof value === 'object' && value.hasOwnProperty('value')) {
-      if (str.includes('stateful')) {
-        newPartialString = str.replace(
-          'stateful',
-          'stateful=' + `"${value.id}"`
-        );
-      }
       trackedStates.add(value);
-      console.log('stateful', newPartialString);
-      return newPartialString + value.current();
+      return value.current();
     } else {
-      return newPartialString + value;
+      return value;
     }
   }
 

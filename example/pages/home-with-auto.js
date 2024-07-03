@@ -1,4 +1,4 @@
-import { css, html, useEffect, useState } from '../../index.js';
+import { css, html, $, useEffect, useState } from '../../index.js';
 import { Button } from '../components/button.js';
 
 export default function Home() {
@@ -31,24 +31,26 @@ export default function Home() {
     margin-block: 2rem;
   `;
 
-  const home = html`<div>
-    <h1 stateful>${userName}</h1>
-    <p id="count" stateful>count: ${count}</p>
-    <input
-      type="text"
-      value="${userName}"
-      class="${styledInput}"
-      placeholder="just type something..."
-      onChange="${handleInput}" />
-    <!-- Button Component Usage -->
-    <div class="flex-item">${Button('+ Add One', setCount)}</div>
-    <div class="${flexItem}">
-      <z-link to="/">Home</z-link>
-      <z-link to="/about">About</z-link>
-      <z-link to="/layout?blogId=123">Layout</z-link>
-      <a href="https://www.google.com">Google</a>
-    </div>
-  </div>`;
+  const home = $(
+    () => html`<div>
+      <h1>${userName}</h1>
+      <p id="count">count: ${count}</p>
+      <input
+        type="text"
+        value="${userName}"
+        class="${styledInput}"
+        placeholder="just type something..."
+        onChange="${handleInput}" />
+      <!-- Button Component Usage -->
+      <div class="flex-item">${Button('+ Add One', setCount)}</div>
+      <div class="${flexItem}">
+        <z-link to="/">Home</z-link>
+        <z-link to="/about">About</z-link>
+        <z-link to="/layout?blogId=123">Layout</z-link>
+        <a href="https://www.google.com">Google</a>
+      </div>
+    </div>`
+  );
 
   useEffect(() => {
     console.log('count changed::', count.current());

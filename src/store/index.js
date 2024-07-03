@@ -30,6 +30,7 @@ export function useState(initialState) {
   const state = {
     id: newStateId,
     current: () => channel.getState(),
+    subscribe: (fn) => channel.subscribe(fn),
     value: channel.getState(),
   };
   // const state = channel.getState();
