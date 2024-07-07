@@ -1,8 +1,8 @@
-# Z.Js Framework (v0.0.3)
+# 🔥 Z.Js Framework (v0.0.3)
 
 The literally low overhead js framework!
 
-## Why?
+## 🤖 Why Another Framework? Why Not, Listen Up
 
 As everyone is running for meta frameworks, server side rendering and whole new stuff out there in js frameworks ecosystem some of us got faded, frontend is hard, why make it harder with bloat and more mental overhead on devs? #DevsBrainsMatter
 
@@ -12,7 +12,7 @@ Nothing fancy, something to bring that ease feeling when you just go vanilla usi
 
 > So after months of work, and learning, z js framework is the fruit of the efforts to make a simpler build step less js framework that trades all shinny stuff for simplicity and low mental overhead on devs, your tired of having to learn and always play catch up on new framework features just to make a simple app? try Z.Js!
 
-work in progress and calling on all those who feel like modern js frameworks have become so bloated, come contribute and we make this awesome, of course no shinny features allowed, z doesn't plan to included server side rendering, or related stuff, just do it old way, let your backend do it's job, and here we handle frontend side, this is not another one size fits all thing, this is a client side framework inspired by frameworks like react but not like them or another fullstack ferry, humbly it's just meant to be used for frontend and that's all!
+work in progress and calling on all those who feel like modern js frameworks have become so bloated, come contribute and we make this awesome, of course no shinny features allowed, z doesn't plan to included server side rendering, or related stuff, just do it old way, let your backend do it's job, and here we handle frontend side, this is not another one size fits all thing, this is a client side framework inspired by frameworks like react but not like them or another fullstack ferry, humbly it's just meant to be used for frontend only and that's all!
 
 ## Roadmap And Features If You Like To Contribute
 
@@ -34,13 +34,51 @@ work in progress and calling on all those who feel like modern js frameworks hav
 
 what else?
 
-## How it works?
+## 🤣 How it works? Yes It Works
 
-This is relatively very simple if you know some js, and how to use template literals, just drop in a z.js script and start building, use any http server cause broswers these days yell at you when you just open an html file directly without at least an http server or https secure preferably. you can for testing sake you can just clone this repo, then navigte into `example-with-vite` folder and run `npm install` and then `npm run dev` and you will have a simple example running on `localhost:5173` that's if you familiar with vite and want an easy start but can also just get the vscode extension [live server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) and open the `example` directly and just run live sever on the html file there, like, any or those options would do just fine. you don't need a full flenged server for z to work, you just need to serve the html file over http that's all.
+First things first, here is what you need to get started.
 
-> Tip: Literals can look unlovely sometimes, so if you want a bit more better dx I recommend this vscode extension [Inline HTML](https://marketplace.visualstudio.com/items?itemName=pushqrdx.inline-html) as it  will highlight them and give you some auto completions here and there, as we wait to work on our own z.js vscode extension, you can use this extension and it will work just fine with z.js.
+1. Z js framework
 
-otherwise here is an example of how it works, start by seting up your routes...
+you can install it with command below
+
+```bash
+npm install z-js-framework
+```
+
+or use a cdn link directly in your html file
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/z-js-framework@0.0.3/dist/z.js"></script>
+```
+
+or for ninjas, grab the z.js script file from z js github repo in dist directory and include it in your project.
+
+2. Some static file server, optional but (recommended)
+
+Honestly, you gonna need some tooling to have the best experince but not mandatory
+
+💡 TIP: Use vite to run your project, run `npm i -g vite` to install vite globally and then run `vite dev` in your project root directory to start a dev server. And that's if you familiar with vite and want an easy start but can also just get the vscode extension [live server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+ and just run live sever on the html file there, like, any or those options would do just fine. you don't need a full flenged server for z to work, you just need to serve your artifacts over http that's all, otherwise the browser will be very angry with you and might refuse to show your stuff.
+
+ 3. Vscode Extension (recommended)
+
+This is not a must, but I must tell you that z js uses javaScript template literals even for templating or crafting your UI for example:
+
+```html
+import { html } from 'z.js'
+
+let name = 'Kizz'
+let greetElement = html`<h1>Hello there, ${name}</h1>`
+```
+
+now as you can see, it's pretty easy, just put your stuff in backticks, but we know the IDE won't highlight that as html but as a normal string, so for best experience and auto completions to make it feel like real html, get this exension [Inline HTML](https://marketplace.visualstudio.com/items?itemName=pushqrdx.inline-html) as it  will highlight them and give you some auto completions here and there, as we wait to work on our own z.js vscode extension, you can use that extension and it will work just fine with z.js. or if you want, just don't use it, its still fine!
+
+4. Last thing you need, is well guess it... you just need to write some javaScript code, and that's it.
+
+otherwise here is an example of how it works in great details, these are the official docs for now hehe, so pay attention, start by seting up your routes, in like a main.js or index.js file, whatever your app entry point file is...
+
+> ✅ Routing
 
 ``` js
 'use strict';
@@ -95,6 +133,8 @@ Then have some index html file which can act as the entry point of your applicat
 
 Now, let's have a look at a z js component, a simple re-usable button component, it can be found in `example/components/button.js` and here is how it's implemented,
 
+> ✅ Components
+
 ```js
 import { css, html } from 'z.js';
 
@@ -133,6 +173,8 @@ ohh so you wondering what's happening, don't freak, let me explain:
 3. we then export our Button function or component for re-usablity, that's it.
 
 congs, you have just created your first z js component, now let's use it in a page, let's see how a home page with a button looks like, along some other 2 concepts, state and routing.
+
+> ✅ State Management
 
 ```js
 import { css, html, useEffect, useState } from 'z.js';
@@ -189,6 +231,8 @@ well what's happening here? let's try to understand the code above,
 all most that's all of z as of now, just one last thing though...
 this is how you link between pages,
 
+> ✅ Navigation
+
 ```js
 import { html, useRouter } from 'z.js';
 
@@ -220,9 +264,11 @@ so here we doing a few things, building on old concepts, we import the useRouter
 2. or  the to attribute to it, which is the url you want to route to, in this case we are routing to the about page or home page.
 3. normal a anchor tag links work just fine, they will route to the url you pass them as normal as they should.
 
-## Reactivity
+## ♻️ Reactivity
 
 As with many modern frameworks, they are able to automatically re-render the app UI when state changes, and they do this in kinda different ways, usually using the virtual dom to make sure only minimum changes are applied to the real dom, this is way better and more efficient than just saying element.innerHtml = newHtml, but then z is just real dom, we have no virtual dom, so you either have to do this step manually inside a useEffect or we reached out to some great library [Morphdom](https://github.com/patrick-steele-idem/morphdom) to enable us do this in a smart way but with real dom not virtual dom. You don't have to do anything on your end, you just wrapp your component literal in a callback in our reactive function like below and it will automatically reflect changes on state change, so cool right, here is an example:
+
+> ✅ Reactivity
 
 ```js
 import { html, reactive, useState } from 'z.js';
@@ -245,10 +291,12 @@ export default function SomeComponent() {
 
 Up above, the username will always change to new value as user types into the input.
 
-## Hooks And Utilities
+## 🗃️ Hooks And Utilities
 
 -- useSuspense: this hook helps you show a loading ui or fallback and then load the content when it's ready. useful when feteching data from an api or something.
 It just takes in the promise or fetch function or any async one and a fallback element, and it will return the resolved value of the promise or the fallback element if the promise rejects. It can take retry, maxRetries and retryDelay as options, and it doesn't retry by default otherwise it retries 3 times by default when retry option is set to true.
+
+> ✅ Hooks
 
 ```js
 import { html, useSuspense } from 'z.js';
@@ -279,14 +327,15 @@ function fetchContent() {
   });
 }
 ```
+
 That there shows loading and then bingo, shows the content.
 
-## You want more?
+## 😇 You want more?
 
 come on more stuff coming, and if you reached all the way here, your really a sumurai now, you can start using z js to build your next app, see the examples folder for some examples, as we prepare more docs later, but that's it for now, that's z js framework, let's get building!
 
 More documentation and example of common use cases will be coming soon, help contribute!
 
-## What Next?
+## 👾 What Next?
 
 Well this is still work in progress, am working on it in my little free time, so if you have other ideas or what, reach out to me at [hssnkizz@gmail.com](hssnkizz@gmail.com) or read [Contribution Guide](./CONTRIBUTION.MD) to get started on how things work and the whole project plan and roadmap!
