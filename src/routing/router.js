@@ -22,7 +22,9 @@ class ZLink extends HTMLElement {
   };
 }
 
-customElements.define('z-link', ZLink);
+if (!customElements.get('z-link')) {
+  customElements.define('z-link', ZLink);
+}
 
 export function Router(config = {}) {
   const parent = config.parent || document.body;

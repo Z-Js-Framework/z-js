@@ -1,4 +1,5 @@
-import { css, html, useEffect, useState } from '../../index.js';
+// import { css, html, useEffect, useState } from '../../dist/z.js';
+import { css, html, reactive, useEffect, useState } from '../../index.js';
 import { Button } from '../components/button.js';
 
 export default function Home() {
@@ -31,7 +32,7 @@ export default function Home() {
     margin-block: 2rem;
   `;
 
-  const home = html`<div>
+  const home = () => html`<div>
     <h1 stateful>${userName}</h1>
     <p id="count" stateful>count: ${count}</p>
     <input
@@ -56,5 +57,5 @@ export default function Home() {
     countElement.innerHTML = `count: ${count.current()}`; */
   }, [count]);
 
-  return home;
+  return reactive(home);
 }

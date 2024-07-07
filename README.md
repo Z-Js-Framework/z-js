@@ -1,4 +1,4 @@
-# Z.Js
+# Z.Js Framework (v0.0.3)
 
 The literally low overhead js framework!
 
@@ -14,15 +14,19 @@ Nothing fancy, something to bring that ease feeling when you just go vanilla usi
 
 work in progress and calling on all those who feel like modern js frameworks have become so bloated, come contribute and we make this awesome, of course no shinny features allowed, z doesn't plan to included server side rendering, or related stuff, just do it old way, let your backend do it's job, and here we handle frontend side, this is not another one size fits all thing, this is a client side framework inspired by frameworks like react but not like them or another fullstack ferry, humbly it's just meant to be used for frontend and that's all!
 
-## Roadmap If You Like To Contribute
+## Roadmap And Features If You Like To Contribute
 
 - ✅ Define framework usage and semantic basics
 - ✅ Create a custom state management mechanism
 - ✅ Create a simple way to persist state -- just use local storage or web storage
 - ✅ Create a custom events driven system for reactive UI updates
 - ✅ Create main Z binding layer to bring everything together
-- ✅ Create UI templating and styling methods
+- ✅ Create UI templating and styling foundations
 - ✅ Handle single page application model and routing
+- ✅ Handle automatic re-rendering on state change
+- ✅ Add useful hooks and utilities for common patterns
+- 🔳 Add in builtin form utilities and enhancements
+- 🔳 Add in builtin promise utilities
 - 🔳 Add in builtin page transition and component transition animations
 - 🔳 Add builtin low boilerplate data fetching mechanisms
 - 🔳 Improve documentation and provide more examples
@@ -216,7 +220,70 @@ so here we doing a few things, building on old concepts, we import the useRouter
 2. or  the to attribute to it, which is the url you want to route to, in this case we are routing to the about page or home page.
 3. normal a anchor tag links work just fine, they will route to the url you pass them as normal as they should.
 
-ok if you reached all the way here, your really a sumurai now, you can start using z js to build your next app, see the examples folder for some examples, as we prepare more docs later, but that's it for now, that's z js framework, let's get building!
+## Reactivity
+
+As with many modern frameworks, they are able to automatically re-render the app UI when state changes, and they do this in kinda different ways, usually using the virtual dom to make sure only minimum changes are applied to the real dom, this is way better and more efficient than just saying element.innerHtml = newHtml, but then z is just real dom, we have no virtual dom, so you either have to do this step manually inside a useEffect or we reached out to some great library [Morphdom](https://github.com/patrick-steele-idem/morphdom) to enable us do this in a smart way but with real dom not virtual dom. You don't have to do anything on your end, you just wrapp your component literal in a callback in our reactive function like below and it will automatically reflect changes on state change, so cool right, here is an example:
+
+```js
+import { html, reactive, useState } from 'z.js';
+
+export default function SomeComponent() {
+  const [userName, setUserName] = useState('Kizz');
+
+  const SomeElement = () => html`
+    <div>
+      <h1>UserName Is: ${userName}</h1>
+      <input
+        type="text"
+        value="${userName}"
+        onChange="${(e) => setUserName(event.target.value)}" />
+    </div>`;
+
+  return reactive(SomeElement);
+}
+```
+
+Up above, the username will always change to new value as user types into the input.
+
+## Hooks And Utilities
+
+-- useSuspense: this hook helps you show a loading ui or fallback and then load the content when it's ready. useful when feteching data from an api or something.
+It just takes in the promise or fetch function or any async one and a fallback element, and it will return the resolved value of the promise or the fallback element if the promise rejects. It can take retry, maxRetries and retryDelay as options, and it doesn't retry by default otherwise it retries 3 times by default when retry option is set to true.
+
+```js
+import { html, useSuspense } from 'z.js';
+
+const fallback = html`<p>Loading... chill for now!</p>`;
+
+export default function Demo() {
+  const demoElement = html`
+    <div>
+      <h1>Example of a suspension...</h1>
+      ${useSuspense(fetchContent, fallback)}
+    </div>
+  `;
+
+  return demoElement;
+}
+
+function fetchContent() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() > 0.5) {
+        const content = html`<p>This is the loaded content.</p>`;
+        resolve(content);
+      } else {
+        reject('Failed to load content!!!');
+      }
+    }, 2000);
+  });
+}
+```
+That there shows loading and then bingo, shows the content.
+
+## You want more?
+
+come on more stuff coming, and if you reached all the way here, your really a sumurai now, you can start using z js to build your next app, see the examples folder for some examples, as we prepare more docs later, but that's it for now, that's z js framework, let's get building!
 
 More documentation and example of common use cases will be coming soon, help contribute!
 

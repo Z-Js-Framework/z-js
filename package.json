@@ -20,7 +20,7 @@
     "docs": "jsdoc -d ./docs index.js"
   },
   "devDependencies": {
-    "jsdoc": "^4.0.2",
+    "jsdoc": "^4.0.3",
     "terser": "^5.26.0",
     "vite": "^5.0.0"
   },
@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/javaScriptKampala/z-js/issues"
   },
-  "homepage": "https://github.com/javaScriptKampala/z-js#readme"
+  "homepage": "https://github.com/javaScriptKampala/z-js#readme",
+  "dependencies": {
+    "morphdom": "^2.7.3"
+  }
 }

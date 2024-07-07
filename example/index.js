@@ -2,6 +2,7 @@
 
 import { render, useRouter } from '../index.js';
 import About from './pages/about.js';
+import Demo from './pages/demo.js';
 import Home from './pages/home.js';
 import Layout from './pages/layout.js';
 import NotFound from './pages/notFound.js';
@@ -20,6 +21,10 @@ const routes = [
   {
     route: '/layout',
     component: Layout,
+  },
+  {
+    route: '/demo',
+    component: Demo,
   },
   {
     route: '/*',

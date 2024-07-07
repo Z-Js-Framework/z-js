@@ -7,9 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      morphdom:
+        specifier: ^2.7.3
+        version: 2.7.3
     devDependencies:
       jsdoc:
-        specifier: ^4.0.2
+        specifier: ^4.0.3
         version: 4.0.3
       terser:
         specifier: ^5.26.0
@@ -374,6 +378,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  morphdom@2.7.3:
+    resolution: {integrity: sha512-rvGK92GxSuPEZLY8D/JH07cG3BxyA+/F0Bxg32OoGAEFFhGWA3OqVpqPZlOgZTCR52clXrmz+z2pYSJ6gOig1w==}
+
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -729,6 +736,8 @@ snapshots:
   mdurl@2.0.0: {}
 
   mkdirp@1.0.4: {}
+
+  morphdom@2.7.3: {}
 
   nanoid@3.3.7: {}
 

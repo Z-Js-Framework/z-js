@@ -1,4 +1,4 @@
-import { css, html } from '../../index.js';
+import { $, css, html } from '../../index.js';
 
 export const Button = (children, setCount) => {
   const buttonClass = css`
@@ -21,7 +21,9 @@ export const Button = (children, setCount) => {
     setCount((currentCount) => currentCount + 1);
   };
 
-  return html`<button class="${buttonClass}" onClick="${clickButton}">
-    ${children}
-  </button>`;
+  return $(
+    () => html`<button class="${buttonClass}" onClick="${clickButton}">
+      ${children}
+    </button>`
+  );
 };

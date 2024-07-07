@@ -1,8 +1,15 @@
-import { render as _render, html, $, css } from './src/rendering/index.js';
+import {
+  render as _render,
+  html,
+  reactive,
+  css,
+} from './src/rendering/index.js';
+import { useSuspense } from './src/hooks/index.js';
 import { useEffect, useState, store } from './src/store/index.js';
 import { Router } from './src/routing/router.js';
 
 let _router = null;
+let _parentElement = null;
 
 const render = (parentElement = null, routes = [], initialDelay = 0) => {
   if (!parentElement) {
@@ -14,10 +21,13 @@ const render = (parentElement = null, routes = [], initialDelay = 0) => {
     return;
   }
 
+  // Find the initial route and render it
   let initialRoute = routes.find((r) => r.route === '/');
   _render(parentElement, initialRoute.component);
 
   if (parentElement && routes.length > 0) {
+    _parentElement = parentElement;
+    // Create a new router instance
     _router = new Router({
       routes: routes,
       parent: parentElement,
@@ -29,5 +39,17 @@ const render = (parentElement = null, routes = [], initialDelay = 0) => {
 };
 
 const useRouter = () => _router;
+const getRootElement = () => _parentElement;
 
-export { render, html, $, css, useEffect, useState, store, useRouter };
+export {
+  render,
+  html,
+  reactive,
+  css,
+  useEffect,
+  useState,
+  store,
+  useRouter,
+  getRootElement,
+  useSuspense,
+};
