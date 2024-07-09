@@ -1,11 +1,11 @@
 # This is how  this works in a nutshell
 
-You clone this repository, look around the markdown files around different directories in project, most include what's included and what is missing yet, you can start from there or read the readme.md file with overview of the framework roadmap on a high level.
+You clone this repository, look at the markdown files in different directories in the project, and see what's included and what is missing. You can start from there or read the README.md file, which provides a high-level overview of the framework roadmap.
 
-Once you done picking something you would like to work on, do it, create a branch off main branch, push to it and then make a pull request, we will review it in no time and merge it in if it's ok, and that's it.
+Once you have picked something you would like to work on, do it. Create a branch off the main branch, push to it, and then make a pull request. We will review it in no time and merge it in if it's okay, and that's it.
 
-Except z.js file and a few others, most files have where they belong in subsquent project directories so don't mind some redudant files in some directories for now, most will be removed soon, especially those in experiments!
+Except for the Z.Js file and a few others, most files are where they belong in subsequent project directories, so I don't mind some redundant files in some directories for now. Most will be removed soon, especially those in experiments!
 
-with that said, welcome on board, just keep an eye on how we naming things and how project's structured, we quite want to stay consistent, thank you!
+That said, welcome on board. Just keep an eye on how we name things and how the project is structured. We want to stay consistent. Thank you!
 
-Am Kizz by the way, nice to have you interested in this!
+I’m Kizz, by the way. It's nice to have you interested in this!
