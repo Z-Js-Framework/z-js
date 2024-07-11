@@ -1,4 +1,4 @@
-# 🔥 Z.Js Framework (v0.0.3)
+# 🔥 Z.Js Framework (v0.0.4)
 
 The literally low overhead Js framework!
 
@@ -229,7 +229,7 @@ export const AuthComponent = () => {
 
   let UI = html`
     <div>
-      <h1>Hello, ${user.userName}</h1>
+      <h1>Hello, ${user.value.userName}</h1>
       <button onclick="${() => setUser(null)}">Logout</button>
     </div>
   `;
