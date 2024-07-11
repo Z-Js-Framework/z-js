@@ -13,14 +13,14 @@ export const AuthComponent = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.goTo('/');
+    if (!user.value) {
+      router.goTo('/login');
     }
   }, []);
 
   let UI = html`
     <div>
-      <h1>Hello, ${user.userName}</h1>
+      <h1>Hello, ${user.value.userName}</h1>
       <button onclick="${() => setUser(null)}">Logout</button>
     </div>
   `;

@@ -222,8 +222,8 @@ export const AuthComponent = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.goTo('/');
+    if (!user.value) {
+      router.goTo('/login');
     }
   }, []);
 
