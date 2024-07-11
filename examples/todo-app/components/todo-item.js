@@ -1,5 +1,4 @@
-// import { html } from 'z-js-framework';
-import { html } from '../../../index.js';
+import { html } from 'z-js-framework';
 
 export const TodoItem = (props) => {
   const { todo, onEdit, onCheck, onDelete, onArchive } = props;

@@ -1,5 +1,4 @@
-// import { html, useState } from 'z-js-framework';
-import { html, useState, List, reactive } from '../../../index.js';
+import { html, useState, List, reactive, getRef } from 'z-js-framework';
 import { AppHeader } from '../components/app-header';
 import { TodoItem } from '../components/todo-item.js';
 
@@ -40,6 +39,12 @@ export default function TodosPage() {
         task: newTodo,
       },
     ]);
+  };
+
+  // getting a ref
+  window.onload = () => {
+    let el = getRef('todoRef');
+    console.log('ref::', el);
   };
 
   let UI = () => html`

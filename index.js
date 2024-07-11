@@ -4,9 +4,16 @@ import {
   reactive,
   css,
   List,
+  getRef,
 } from './src/rendering/index.js';
 import { useSuspense } from './src/hooks/index.js';
-import { useEffect, useState, store } from './src/store/index.js';
+import {
+  useEffect,
+  useState,
+  radio,
+  createStore,
+  useStore,
+} from './src/store/index.js';
 import { Router } from './src/routing/router.js';
 
 let _router = null;
@@ -46,11 +53,14 @@ export {
   render,
   html,
   List,
+  getRef,
   reactive,
   css,
   useEffect,
   useState,
-  store,
+  createStore,
+  useStore,
+  radio,
   useRouter,
   getRootElement,
   useSuspense,

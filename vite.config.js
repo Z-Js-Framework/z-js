@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import brotli from 'rollup-plugin-brotli';
 
 export default defineConfig({
   build: {
@@ -30,4 +31,7 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    brotli(), // Apply Brotli compression
+  ],
 });

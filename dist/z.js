@@ -552,19 +552,28 @@ function morphdomFactory(morphAttrs2) {
 }
 var morphdom = morphdomFactory(morphAttrs);
 const trackedStates = /* @__PURE__ */ new Set();
+const refs = /* @__PURE__ */ new Set();
+let isRenderingList = false;
+let refElements = [];
 function html(strings, ...values) {
   const functions = [];
   const elements = [];
-  trackedStates.clear();
+  !isRenderingList && trackedStates.clear();
+  const valueHandlers = {
+    function: handleFunction,
+    HTMLElement: handleHTMLElement,
+    Text: handleText,
+    Array: handleArray,
+    default: handleDefault
+  };
   const fullString = strings.reduce((acc, str, i) => {
-    if (typeof values[i] === "function") {
-      return acc + str + `__FUNCTION_${i}__`;
-    } else if (values[i] instanceof HTMLElement) {
-      const uniqueId = values[i].getAttribute("_id") || generateUniqueId("ELEMENT");
-      values[i].setAttribute("_id", uniqueId);
-      return acc + str + `<div _id="${uniqueId}"></div>`;
+    if (i < values.length) {
+      const value = values[i];
+      const valueType = getValueType(value);
+      const handler = valueHandlers[valueType];
+      return acc + str + handler(value, i);
     }
-    return acc + str + (values[i] !== void 0 ? evalValue(values[i]) : "");
+    return acc + str;
   }, "");
   values.forEach((value, index) => {
     if (typeof value === "function") {
@@ -581,24 +590,96 @@ function html(strings, ...values) {
       });
     }
   });
+  function handleFunction(value, index) {
+    return `__FUNCTION_${index}__`;
+  }
+  function handleHTMLElement(value) {
+    const uniqueId = value.getAttribute("_id") || generateUniqueId("ELEMENT");
+    value.setAttribute("_id", uniqueId);
+    return `<div _id="${uniqueId}"></div>`;
+  }
+  function handleText(value) {
+    return value.textContent;
+  }
+  function handleArray(value) {
+    return value.map((item) => {
+      if (item instanceof HTMLElement) return handleHTMLElement(item);
+      if (item instanceof Text) return handleText(item);
+      return escapeHTML(`${item}`);
+    }).join("");
+  }
+  function handleDefault(value) {
+    return value !== void 0 ? evalValue(value) : "";
+  }
+  function getValueType(value) {
+    if (typeof value === "function") return "function";
+    if (value instanceof HTMLElement) return "HTMLElement";
+    if (value instanceof Text) return "Text";
+    if (Array.isArray(value)) return "Array";
+    return "default";
+  }
   function evalValue(value) {
+    if (typeof value === "object" && (value == null ? void 0 : value.type) === "LIST") {
+      let placeholder = `<div list="${value.id}">list</div>`;
+      let listRefExists = false;
+      refs.forEach((ref) => {
+        if (ref.ref === value.ref && ref.type === value.type) {
+          listRefExists = true;
+        }
+      });
+      if (!listRefExists) {
+        refs.add({
+          ref: value.ref,
+          type: value.type,
+          id: value.id,
+          fn: value.fn
+        });
+      }
+      return placeholder;
+    }
     if (typeof value === "object" && value.hasOwnProperty("value")) {
       trackedStates.add(value);
       return value.current();
+    } else if (Array.isArray(value)) {
+      return value.map((item) => escapeHTML(`${item}`)).join("");
     } else {
-      return value;
+      return escapeHTML(`${value}`);
     }
   }
-  const parser = new DOMParser();
-  const doc2 = parser.parseFromString(fullString, "text/html");
-  const rootElement = doc2.body.firstChild;
+  function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  const rootElement = getRootElement$1(fullString);
   const element = createElement(
     buildStructure(rootElement, functions, elements),
     trackedStates
   );
   return element;
 }
+function getRootElement$1(fullString) {
+  const parser = new DOMParser();
+  let doc2;
+  if (fullString.trim().match(/^<(tr|td|th|tbody|thead|tfoot)/i)) {
+    doc2 = parser.parseFromString(`<table>${fullString}</table>`, "text/html");
+    return doc2.querySelector("table").firstElementChild;
+  } else {
+    doc2 = parser.parseFromString(fullString, "text/html");
+    return doc2.body.firstElementChild;
+  }
+}
 function buildStructure(element, functions, elements) {
+  if (element.nodeType === Node.TEXT_NODE) {
+    return {
+      type: "#text",
+      content: element.textContent.trim(),
+      attributes: {},
+      children: [],
+      elements
+    };
+  } else if (!(element == null ? void 0 : element.tagName)) {
+    console.error("Invalid element:", element);
+    return null;
+  }
   const tag = element.tagName.toLowerCase();
   const attributes = extractAttributes(element, functions, elements);
   const content = Array.from(element.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE).map((node) => node.textContent.trim()).join("");
@@ -613,6 +694,9 @@ function buildStructure(element, functions, elements) {
 }
 function createElement(structure, trackedStates2) {
   const { type, content, attributes, children, elements } = structure;
+  if (type === "#text") {
+    return document.createTextNode(content);
+  }
   const element = document.createElement(type);
   if (!element.hasAttribute("_id")) {
     const uniqueId = generateUniqueId("ELEMENT");
@@ -625,6 +709,21 @@ function createElement(structure, trackedStates2) {
     element.textContent = content;
   }
   for (const [key, value] of Object.entries(attributes)) {
+    if (key === "ref") {
+      let refExists = refElements.find((r) => r.ref === value);
+      if (!refExists) {
+        refElements.push({
+          ref: value,
+          element
+        });
+      } else {
+        refElements = refElements.filter((r) => r.ref !== value);
+        refElements.push({
+          ref: value,
+          element
+        });
+      }
+    }
     if (key.startsWith("on")) {
       const eventType = key.slice(2).toLowerCase();
       if (eventType === "change") {
@@ -691,6 +790,65 @@ function updateDom(fromNode, toNode, options = {}) {
   const finalOptions = { ...defaultOptions, ...options };
   morphdom(fromNode, toNode, finalOptions);
 }
+function List(props) {
+  let list_id = generateUniqueId("LIST");
+  const { ref, items, render: render2 } = props;
+  isRenderingList = true;
+  const renderList = (target) => {
+    if (target) {
+      let _items = items;
+      if (items.value) {
+        _items = items.value;
+      }
+      _items.forEach((item, index) => {
+        const childElement = render2({ item, index });
+        target.innerHtml = "";
+        target.appendChild(childElement);
+      });
+      isRenderingList = false;
+    } else {
+      console.error("ref binding element not found when list!");
+    }
+  };
+  return {
+    type: "LIST",
+    ref,
+    id: list_id,
+    fn: renderList
+  };
+}
+function _getRef(ref) {
+  let target = document.querySelector(`[ref="${ref}"]`) || null;
+  !target && console.error(`ref not found: ${ref}`);
+  return target;
+}
+function getRef(ref) {
+  let target = null;
+  refElements.forEach((r) => {
+    if (r.ref === ref) {
+      target = r.element;
+    }
+  });
+  !target && console.error(`ref not found: ${ref}`);
+  return target;
+}
+function init() {
+  window.addEventListener("DOMContentLoaded", () => renderLists());
+}
+function renderLists() {
+  refs.forEach((ref) => {
+    if (ref.type === "LIST") {
+      let target = _getRef(ref.ref);
+      if (target) {
+        ref.fn(target);
+      }
+    }
+  });
+  Array.from(document.querySelectorAll("div[list]")).forEach((placeholder) => {
+    placeholder.remove();
+  });
+}
+init();
 function useSuspense(promise, fallback, options = {}) {
   const { retry = false, retryDelay = 1e3, maxRetries = 3 } = options;
   if (!(fallback instanceof HTMLElement)) {
@@ -900,14 +1058,14 @@ function StateRadio(options = {}) {
   };
 }
 const { channels } = new StateRadio();
-const store = channels;
+const radio = channels;
 function useEffect(newFn, dependentStateChannels) {
   if (dependentStateChannels.length === 0) {
     window.addEventListener("DOMContentLoaded", newFn());
     return;
   }
   dependentStateChannels.forEach((channel) => {
-    let targetChannel = store.getChannel(channel.id);
+    let targetChannel = radio.getChannel(channel.id);
     if (!targetChannel) {
       console.error("channel not found", channel);
       return;
@@ -926,6 +1084,27 @@ function useState(initialState) {
   };
   const setState = channel.setState;
   return [state, setState, channel];
+}
+function createStore(initialState) {
+  let newStateId = generateUniqueId("store", 12);
+  let channel = channels.addChannel(newStateId, initialState);
+  return {
+    id: newStateId,
+    setValue: channel.setState,
+    getValue: () => channel.getState(),
+    subscribe: (fn) => channel.subscribe(fn),
+    channel
+  };
+}
+function useStore(store) {
+  const state = {
+    id: store.id,
+    current: () => store.getValue(),
+    subscribe: (fn) => store.subscribe(fn),
+    value: store.getState()
+  };
+  const setState = store.setState;
+  return [state, setState, store.channel];
 }
 class ZLink extends HTMLElement {
   constructor() {
@@ -1069,14 +1248,18 @@ const render = (parentElement = null, routes = [], initialDelay = 0) => {
 const useRouter = () => _router;
 const getRootElement = () => _parentElement;
 export {
+  List,
+  createStore,
   css,
+  getRef,
   getRootElement,
   html,
+  radio,
   reactive,
   render,
-  store,
   useEffect,
   useRouter,
   useState,
+  useStore,
   useSuspense
 };

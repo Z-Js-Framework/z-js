@@ -3,6 +3,8 @@ import morphdom from '../libs/morphdom-esm@v2.7.3.js';
 
 const trackedStates = new Set();
 const refs = new Set();
+let isRenderingList = false;
+let refElements = [];
 
 /**
  * Processes a tagged template literal and returns an HTML element.
@@ -15,7 +17,7 @@ export function html(strings, ...values) {
   // Store functions, states and elements separately for future use
   const functions = [];
   const elements = [];
-  trackedStates.clear();
+  !isRenderingList && trackedStates.clear();
   const valueHandlers = {
     function: handleFunction,
     HTMLElement: handleHTMLElement,
@@ -233,6 +235,22 @@ export function createElement(structure, trackedStates) {
 
   // Apply the attributes
   for (const [key, value] of Object.entries(attributes)) {
+    if (key === 'ref') {
+      let refExists = refElements.find((r) => r.ref === value);
+
+      if (!refExists) {
+        refElements.push({
+          ref: value,
+          element: element,
+        });
+      } else {
+        refElements = refElements.filter((r) => r.ref !== value);
+        refElements.push({
+          ref: value,
+          element: element,
+        });
+      }
+    }
     if (key.startsWith('on')) {
       const eventType = key.slice(2).toLowerCase();
       if (eventType === 'change') {
@@ -364,24 +382,26 @@ function updateDom(fromNode, toNode, options = {}) {
 export function List(props) {
   let list_id = generateUniqueId('LIST');
   const { ref, items, render } = props;
+  isRenderingList = true;
 
   const renderList = (target) => {
     if (target) {
       let _items = items;
       if (items.value) {
         _items = items.value;
-        trackedStates.add(items);
-        items.subscribe(() => {
-          console.log('sub');
-          // renderList(target);
-        });
-        console.log('tracked', trackedStates);
+        // trackedStates.add(items);
+        // items.subscribe(() => {
+        //   console.log('sub');
+        //   // renderList(target);
+        // });
+        // console.log('tracked', trackedStates);
       }
       _items.forEach((item, index) => {
         const childElement = render({ item: item, index: index });
         target.innerHtml = '';
         target.appendChild(childElement);
       });
+      isRenderingList = false;
     } else {
       console.error('ref binding element not found when list!');
     }
@@ -395,29 +415,38 @@ export function List(props) {
   };
 }
 
-function getRef(ref, _parent) {
-  let _ref = _parent
-    ? _parent.querySelector(`[ref="${ref}"]`)
-    : document.querySelector(`[ref="${ref}"]`);
-  if (_ref) {
-    return _ref;
-  } else {
-    console.error(`ref not found: ${ref}`);
-    return null;
-  }
+function _getRef(ref) {
+  let target = document.querySelector(`[ref="${ref}"]`) || null;
+  !target && console.error(`ref not found: ${ref}`);
+  return target;
+}
+
+/**
+ * Retrieves the DOM element referenced by the provided `ref` string.
+ *
+ * @param {string} ref - The reference string to the target DOM element.
+ * @returns {HTMLElement|null} - The DOM element if found, or `null` if not found.
+ */
+export function getRef(ref) {
+  let target = null;
+  refElements.forEach((r) => {
+    if (r.ref === ref) {
+      target = r.element;
+    }
+  });
+  !target && console.error(`ref not found: ${ref}`);
+  return target;
 }
 
 function init() {
   // render lists
-  window.addEventListener('DOMContentLoaded', () => renderLists(document));
+  window.addEventListener('DOMContentLoaded', () => renderLists());
 }
 
-function renderLists(parentElement) {
+function renderLists() {
   refs.forEach((ref) => {
     if (ref.type === 'LIST') {
-      let target = parentElement
-        ? getRef(ref.ref, parentElement)
-        : getRef(ref.ref);
+      let target = _getRef(ref.ref);
       if (target) {
         ref.fn(target);
       }

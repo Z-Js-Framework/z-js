@@ -22,6 +22,7 @@ This is a work in progress and calling on all those who feel like modern js fram
 - ✅ Create a custom events-driven system for reactive UI updates
 - ✅ Create a main Z binding layer to bring everything together
 - ✅ Create UI templating and styling foundations
+- ✅ Create common templating utilities (like for loops, conditionals, etc.) -- half way there!
 - ✅ Handle single page application model and routing
 - ✅ Handle automatic re-rendering on state change
 - ✅ Add useful hooks and utilities for common patterns
@@ -31,6 +32,8 @@ This is a work in progress and calling on all those who feel like modern js fram
 - 🔳 Add builtin low boilerplate data fetching mechanisms
 - 🔳 Improve documentation and provide more examples
 - 🔳 Introduce Js doc and ship this for massive adoption!
+- 🔳 Add tests coverage to ensure more reliability and trust
+- 🔳 Do some benchmarks, refactoring and performance optimizations
 
 What else?
 
@@ -66,7 +69,7 @@ Honestly, you gonna need some tooling to have the best experience, but it's not 
 This is not a must, but I must tell you that Z Js uses JavaScript template literals even for templating or crafting your UI, for example:
 
 ```html
-import { html } from 'z.js'
+import { html } from 'z-js-framework'
 
 let name = 'Kizz'
 let greetElement = html`<h1>Hello there, ${name}</h1>`
@@ -83,7 +86,7 @@ Otherwise, here is an example of how it works in great detail. These are the off
 ``` js
 'use strict';
 
-import { render } from 'z.js';
+import { render } from 'z-js-framework';
 import About from './pages/about.js';
 import Home from './pages/home.js';
 import Layout from './pages/layout.js';
@@ -133,10 +136,10 @@ Then, have an index HTML file that can act as the entry point for your applicati
 
 Now, let's have a look at a Z Js component, a simple re-usable button component. It can be found in `example/components/button.js` and here is how it's implemented.
 
-> ✅ Components
+> ✅ Components & Styling
 
 ```js
-import { css, html } from 'z.js';
+import { css, html } from 'z-js-framework';
 
 export const Button = (children, setCount) => {
   const buttonClass = css`
@@ -174,10 +177,75 @@ Ohh, so you are wondering what's happening? Don't freak, let me explain:
 
 Congratulations! You have just created your first Z Js component. Now, let's use it on a page. Let's see how a home page with a button looks, along with some other concepts, state and routing.
 
-> ✅ State Management
+> ✅ Global State Management
+
+Here is how you would manage complex state in your z applications, create a file say store.js and define and export your global states, these you can then import and use elsewhere in your app components, no need to wrap into any providers or contexts. It's that dead simple as illustrated below.
 
 ```js
-import { css, html, useEffect, useState } from 'z.js';
+
+import { createStore } from 'z-js-framework';
+
+export const countStore = createStore(100);
+
+export const authStore = createStore(false);
+
+// there's a lot you can do, channel.getHistor() for example gets the store state history upto 10 previous versions
+const { getValue, setValue, subScribe, channel } = createStore({
+  name: 'z-js-framework',
+  age: 1,
+});
+
+// access store state
+console.log(countStore.getValue()); // 100
+
+// run everytime state changes
+authStore.subScribe((newState) => {
+  console.log('auth changed::', newState);
+});
+```
+
+then in any compoent you can just do something like...
+
+```js
+import {
+  html,
+  reactive,
+  useEffect,
+  useStore,
+  useRouter,
+} from 'z-js-framework';
+import { authStore } from '../store.js';
+
+export const AuthComponent = () => {
+  const [user, setUser] = useStore(authStore);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.goTo('/');
+    }
+  }, []);
+
+  let UI = html`
+    <div>
+      <h1>Hello, ${user.userName}</h1>
+      <button onclick="${() => setUser(null)}">Logout</button>
+    </div>
+  `;
+
+  return reactive(UI);
+};
+```
+
+The only thing to note here is we import useStore and pass in the store, it makes the state available to the component, and we can use it as a normal state variable within the component, and we can of course update it efficiently, all state updaets are granular and only affect their respective components. You can learn more about how state is handled and other interesting things you can do, z is powered by [State Radio](https://www.npmjs.com/package/state-radio) wrapped under hood for more simplicity but all state radio features can be accessed otherwise via the exposed state channels.
+
+otherwise let's see in details how state works then on component level...
+
+> ✅ Component Level State Management
+
+```js
+import { css, html, useEffect, useState } from 'z-js-framework';
 import { Button } from '../components/button.js';
 
 export default function Home() {
@@ -201,7 +269,7 @@ export default function Home() {
     <!-- Button Component Usage -->
     <div class="flex-item">${Button('+ Add One', setCount)}</div>
   </div>`;
- 
+
   // react to state changes
   useEffect(() => {
     console.log('count changed::', count.current());
@@ -218,14 +286,27 @@ export default function Home() {
 Well, what's happening here? let's try to understand the code above.
 
 1. We again import different stuff from the Z Js framework. These are like hooks or utility functions, each doing a well-defined thing.
+
 2. We import the Button component from the components directory. We can also import other components from other directories; it's just a convention to keep all your components in a components directory. We already saw how such a component is made in previous steps!
+
 3. Since we already know about the HTML and CSS functions, let's look at the new ones here: useState and useEffect. These are much inspired by those of React, but make no mistake—they're quite different in how they work. This is not React!
-4. The useState returns the state object and a state setter, e.g. count and setCount. The state object has 2 properties that you can use for now: the value and current. The value is the current value of the state, the current is a function that returns the current value of the state, so you can use it to get the current value of the state, and the setter is a function that takes a new value and updates the state, so you can use it to update the state. The state setter is useful when you want to update the state from a function or you want to update the state from a child component. While the current function on the state object is useful when you want to get the current value of the state from a child component or in a series of component and state lifecycle, basically in useffect use state.current() to access state's current value, not just state.value, you will be good.
-5. The useEffect is a function that takes a function and an array of state object dependencies. It's called when the dependencies change, and it's called after the component is rendered, so you can use it to react to state changes. You can also use it to fetch data from an API upon some change of state or do any other side effects, but make no mistake. Unlike react, this one only runs when the state changes. It's not run on render of component. It's like an event listener, which only happens when something happens, say, a change of state in this case. Otherwise, if an empty state dependencies array is provided, the provided function is run only once and for all on component load. Otherwise, it would rerun this function every time any of the provided state-dependent objects change or never if they never change!
+
+4. The useState returns the state object and a state setter, e.g. count and setCount. The state object has 2 properties that you can use for now: the value and current. The value is the current value of the state, the current is a function that returns the current value of the state, so you can use it to get the current value of the state, and the setter is a function that takes a new value and updates the state, so you can use it to update the state.
+
+    The state setter is useful when you want to update the state from a function or you want to update the state from a child component. While the current function on the state object is useful when you want to get the current value of the state from a child component or in a series of component and state lifecycle, basically in useffect use state.current() to access state's current value, not just state.value, you will be good.
+
+5. The useEffect is a function that takes a function and an array of state object dependencies. It's called when the dependencies change, and it's called after the component is rendered, so you can use it to react to state changes. You can also use it to fetch data from an API upon some change of state or do any other side effects, but make no mistake. Unlike react, this one only runs when the state changes. It's not run on render of component. It's like an event listener, which only happens when something happens, say, a change of state in this case.
+
+    Otherwise, if an empty state dependencies array is provided, the provided function is run only once and for all on component load. Otherwise, it would rerun this function every time any of the provided state-dependent objects change or never if they never change!
+
 6. Notice how we manually select the parts we want to update on state change from our home element and change its inner HTML. This is real DOM manipulation. The framework doesn't handle this for you as of now. You update what you want to update as you see fit, just like you would in vanilla JS. This is just a bit simplified, but not a replacement.
+
 7. Notice how we use state.current() inside the useEffect. This ensures we get the latest value of this state object; otherwise, state.value would be the old value of the state object, which would be the value of the state object at the time the component was rendered.
+
 8. State and state setters can be passed to child components as you see how setCount is being passed to the Button component.
+
 9. Unlike vanilla js literals here we can define our literals and attach events all at once, it's like jsx + template literals = jsx literals kind of, you see we attach the onChange handler on the input, and we do this by directly referencing the handleInput function, under the hood z js will create a real dom element out of this template and attach this as it should be, given in it's there in the component scope, or passed as an argument.
+
 10. All component or page functions in z return the created element, thats how we are able to reuse them and render them in the dom.
 
 Almost that's all of Z as of now. Just one last thing, though...
@@ -234,7 +315,7 @@ This next part is how you link between pages.
 > ✅ Navigation
 
 ```js
-import { html, useRouter } from 'z.js';
+import { html, useRouter } from 'z-js-framework';
 
 export default function Layout() {
   const { getParam } = useRouter();
@@ -271,7 +352,7 @@ As with many modern frameworks, they are able to automatically re-render the app
 > ✅ Reactivity
 
 ```js
-import { html, reactive, useState } from 'z.js';
+import { html, reactive, useState } from 'z-js-framework';
 
 export default function SomeComponent() {
   const [userName, setUserName] = useState('Kizz');
@@ -299,7 +380,7 @@ It just takes in the promise or fetch function or any async one and a fallback e
 > ✅ Hooks
 
 ```js
-import { html, useSuspense } from 'z.js';
+import { html, useSuspense } from 'z-js-framework';
 
 const fallback = html`<p>Loading... chill for now!</p>`;
 
@@ -327,6 +408,43 @@ function fetchContent() {
   });
 }
 ```
+
+## 🌲 Rendering Lists
+
+Z Js has a few helpers to help you render lists or array of items. This is very useful when you working with a list of items or iterable data and you rendering them in a restrictive semantic element say a table or that you want to maintain the structure of the elements in dom exactly, i.e if elements a to be exactly direct children of the parent element, most frameworks provide helpers here such as the v-for in vue, etc. Here is how you can go about it in z.
+
+> ✅ Rendering Lists
+
+```js
+import { html, useState, List, reactive } from 'z-js-framework';
+export default function TodosPage() {
+  const [todos, setTodos] = useState([
+    {
+      id: 1,
+      task: 'something cool',
+      completed: true,
+    },
+    {
+      id: 2,
+      task: 'something again',
+      completed: false,
+    },
+  ]);
+   let UI = () => html`
+        <table class="todos-table">
+          <tbody ref="todoRef">
+            ${List({
+              ref: 'todoRef',
+              items: todos,
+              render: ({ item: props }) => TodoItem({...props}),
+            })}
+          </tbody>
+        </table>`
+   return reactive(UI);
+}
+```
+
+As you can see, the `List` utility takes in a few options, the ref is the ref of the parent element, items is the array of items to render, and render is the function that renders each item, it should return a single element and takes in each item in the items array as item which you can even alias as props.
 
 That shows loading, and then bingo shows the content.
 
