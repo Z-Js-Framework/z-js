@@ -3,6 +3,7 @@ import {
   html,
   reactive,
   css,
+  List,
 } from './src/rendering/index.js';
 import { useSuspense } from './src/hooks/index.js';
 import { useEffect, useState, store } from './src/store/index.js';
@@ -44,6 +45,7 @@ const getRootElement = () => _parentElement;
 export {
   render,
   html,
+  List,
   reactive,
   css,
   useEffect,

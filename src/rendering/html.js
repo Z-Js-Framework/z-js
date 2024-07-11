@@ -2,6 +2,7 @@ import { generateUniqueId } from '../utils/utilities.js';
 import morphdom from '../libs/morphdom-esm@v2.7.3.js';
 
 const trackedStates = new Set();
+const refs = new Set();
 
 /**
  * Processes a tagged template literal and returns an HTML element.
@@ -15,18 +16,23 @@ export function html(strings, ...values) {
   const functions = [];
   const elements = [];
   trackedStates.clear();
+  const valueHandlers = {
+    function: handleFunction,
+    HTMLElement: handleHTMLElement,
+    Text: handleText,
+    Array: handleArray,
+    default: handleDefault,
+  };
 
   // Construct the full string from the template literal parts
   const fullString = strings.reduce((acc, str, i) => {
-    if (typeof values[i] === 'function') {
-      return acc + str + `__FUNCTION_${i}__`;
-    } else if (values[i] instanceof HTMLElement) {
-      const uniqueId =
-        values[i].getAttribute('_id') || generateUniqueId('ELEMENT');
-      values[i].setAttribute('_id', uniqueId);
-      return acc + str + `<div _id="${uniqueId}"></div>`;
+    if (i < values.length) {
+      const value = values[i];
+      const valueType = getValueType(value);
+      const handler = valueHandlers[valueType];
+      return acc + str + handler(value, i);
     }
-    return acc + str + (values[i] !== undefined ? evalValue(values[i]) : '');
+    return acc + str;
   }, '');
 
   values.forEach((value, index) => {
@@ -45,25 +51,111 @@ export function html(strings, ...values) {
     }
   });
 
+  function handleFunction(value, index) {
+    return `__FUNCTION_${index}__`;
+  }
+
+  function handleHTMLElement(value) {
+    const uniqueId = value.getAttribute('_id') || generateUniqueId('ELEMENT');
+    value.setAttribute('_id', uniqueId);
+    return `<div _id="${uniqueId}"></div>`;
+  }
+
+  function handleText(value) {
+    return value.textContent;
+  }
+
+  function handleArray(value) {
+    return value
+      .map((item) => {
+        if (item instanceof HTMLElement) return handleHTMLElement(item);
+        if (item instanceof Text) return handleText(item);
+        return escapeHTML(`${item}`);
+      })
+      .join('');
+  }
+
+  function handleDefault(value) {
+    return value !== undefined ? evalValue(value) : '';
+  }
+
+  function getValueType(value) {
+    if (typeof value === 'function') return 'function';
+    if (value instanceof HTMLElement) return 'HTMLElement';
+    if (value instanceof Text) return 'Text';
+    if (Array.isArray(value)) return 'Array';
+    return 'default';
+  }
+
   function evalValue(value) {
+    if (typeof value === 'object' && value?.type === 'LIST') {
+      let placeholder = `<div list="${value.id}">list</div>`;
+
+      let listRefExists = false;
+      refs.forEach((ref) => {
+        if (ref.ref === value.ref && ref.type === value.type) {
+          listRefExists = true;
+        }
+      });
+
+      if (!listRefExists) {
+        // track ref
+        refs.add({
+          ref: value.ref,
+          type: value.type,
+          id: value.id,
+          fn: value.fn,
+        });
+      }
+
+      return placeholder;
+    }
     if (typeof value === 'object' && value.hasOwnProperty('value')) {
       trackedStates.add(value);
       return value.current();
+    } else if (Array.isArray(value)) {
+      return value.map((item) => escapeHTML(`${item}`)).join('');
     } else {
-      return value;
+      return escapeHTML(`${value}`);
     }
   }
 
+  function escapeHTML(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   // Parse the HTML string using DOMParser
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(fullString, 'text/html');
-  const rootElement = doc.body.firstChild;
+  // const parser = new DOMParser();
+  // const doc = parser.parseFromString(fullString, 'text/html');
+  // const rootElement = doc.body.firstChild;
+  const rootElement = getRootElement(fullString);
   const element = createElement(
     buildStructure(rootElement, functions, elements),
     trackedStates
   );
 
   return element;
+}
+
+function getRootElement(fullString) {
+  const parser = new DOMParser();
+  let doc;
+
+  // Check if the string starts with a table-related element
+  if (fullString.trim().match(/^<(tr|td|th|tbody|thead|tfoot)/i)) {
+    // Wrap in a table structure for effective parsing, table elements are restrictive if not used in a table context
+    doc = parser.parseFromString(`<table>${fullString}</table>`, 'text/html');
+    return doc.querySelector('table').firstElementChild;
+  } else {
+    // For other elements, we parse normally
+    doc = parser.parseFromString(fullString, 'text/html');
+    return doc.body.firstElementChild;
+  }
 }
 
 /**
@@ -75,6 +167,19 @@ export function html(strings, ...values) {
  * @returns {Object} The AST structure representing the element.
  */
 function buildStructure(element, functions, elements) {
+  // if element is text
+  if (element.nodeType === Node.TEXT_NODE) {
+    return {
+      type: '#text',
+      content: element.textContent.trim(),
+      attributes: {},
+      children: [],
+      elements: elements,
+    };
+  } else if (!element?.tagName) {
+    console.error('Invalid element:', element);
+    return null;
+  }
   const tag = element.tagName.toLowerCase();
   const attributes = extractAttributes(element, functions, elements);
   const content = Array.from(element.childNodes)
@@ -103,6 +208,11 @@ function buildStructure(element, functions, elements) {
  */
 export function createElement(structure, trackedStates) {
   const { type, content, attributes, children, elements } = structure;
+
+  // Handle text nodes
+  if (type === '#text') {
+    return document.createTextNode(content);
+  }
 
   // Create the element
   const element = document.createElement(type);
@@ -241,3 +351,83 @@ function updateDom(fromNode, toNode, options = {}) {
   // Perform the DOM update
   morphdom(fromNode, toNode, finalOptions);
 }
+
+/**
+ * Renders a list of items using the provided render function.
+ *
+ * @param {Object} props - The props object for the List component.
+ * @param {string} props.ref - The reference to the target element where the list should be rendered.
+ * @param {any[]} props.items - The array of items to be rendered in the list.
+ * @param {function} props.render - The function to render each item in the list. It should return a valid html element.
+ * @returns {Object} - An object containing metadata about the list, including the type, reference, unique ID, and render function, this is used internally to render the list after the initial render.
+ */
+export function List(props) {
+  let list_id = generateUniqueId('LIST');
+  const { ref, items, render } = props;
+
+  const renderList = (target) => {
+    if (target) {
+      let _items = items;
+      if (items.value) {
+        _items = items.value;
+        trackedStates.add(items);
+        items.subscribe(() => {
+          console.log('sub');
+          // renderList(target);
+        });
+        console.log('tracked', trackedStates);
+      }
+      _items.forEach((item, index) => {
+        const childElement = render({ item: item, index: index });
+        target.innerHtml = '';
+        target.appendChild(childElement);
+      });
+    } else {
+      console.error('ref binding element not found when list!');
+    }
+  };
+
+  return {
+    type: 'LIST',
+    ref: ref,
+    id: list_id,
+    fn: renderList,
+  };
+}
+
+function getRef(ref, _parent) {
+  let _ref = _parent
+    ? _parent.querySelector(`[ref="${ref}"]`)
+    : document.querySelector(`[ref="${ref}"]`);
+  if (_ref) {
+    return _ref;
+  } else {
+    console.error(`ref not found: ${ref}`);
+    return null;
+  }
+}
+
+function init() {
+  // render lists
+  window.addEventListener('DOMContentLoaded', () => renderLists(document));
+}
+
+function renderLists(parentElement) {
+  refs.forEach((ref) => {
+    if (ref.type === 'LIST') {
+      let target = parentElement
+        ? getRef(ref.ref, parentElement)
+        : getRef(ref.ref);
+      if (target) {
+        ref.fn(target);
+      }
+    }
+  });
+  // remove all list placeholders
+  Array.from(document.querySelectorAll('div[list]')).forEach((placeholder) => {
+    placeholder.remove();
+  });
+}
+
+//  renderLists for initial render
+init();

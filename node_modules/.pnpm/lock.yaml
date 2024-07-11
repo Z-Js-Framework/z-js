@@ -11,6 +11,9 @@ importers:
       morphdom:
         specifier: ^2.7.3
         version: 2.7.3
+      z-js-framework:
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       jsdoc:
         specifier: ^4.0.3
@@ -466,6 +469,9 @@ packages:
   xmlcreate@2.0.4:
     resolution: {integrity: sha512-nquOebG4sngPmGPICTS5EnxqhKbCmz5Ox5hsszI2T6U5qdrJizBc+0ilYSEjTSzU0yZcmvppztXe/5Al5fUwdg==}
 
+  z-js-framework@0.0.3:
+    resolution: {integrity: sha512-pPIjkdpyIoc51oiw0Ep2e6t1m8S4rioXgtelYu42gDAbnG3s1c4Nw3INfySqlabDBIFD8MzmQMKUPkZcK6NBdg==}
+
 snapshots:
 
   '@babel/helper-string-parser@7.24.7': {}
@@ -811,3 +817,7 @@ snapshots:
       terser: 5.31.1
 
   xmlcreate@2.0.4: {}
+
+  z-js-framework@0.0.3:
+    dependencies:
+      morphdom: 2.7.3
