@@ -52,7 +52,7 @@ npm install z-js-framework
 or use a cdn link directly in your html file
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/z-js-framework@0.0.3/dist/z.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/z-js-framework@0.0.4/dist/z.js"></script>
 ```
 
 Or for the ninjas, grab the z.js script file from Z.Js github repo in dist directory and include it in your project.

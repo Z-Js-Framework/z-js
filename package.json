@@ -17,7 +17,8 @@
   },
   "scripts": {
     "build": "vite build",
-    "docs": "jsdoc -d ./docs index.js"
+    "docs": "jsdoc -d ./docs index.js",
+    "publish": "npm publish --access public"
   },
   "devDependencies": {
     "jsdoc": "^4.0.3",
