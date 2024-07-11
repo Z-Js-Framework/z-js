@@ -1,6 +1,6 @@
 {
   "name": "z-js-framework",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "The literally low overhead js framework!",
   "main": "index.js",
   "type": "module",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "jsdoc": "^4.0.3",
+    "rollup-plugin-brotli": "^3.1.0",
     "terser": "^5.26.0",
     "vite": "^5.0.0"
   },
@@ -44,6 +45,7 @@
   },
   "homepage": "https://github.com/javaScriptKampala/z-js#readme",
   "dependencies": {
-    "morphdom": "^2.7.3"
+    "morphdom": "^2.7.3",
+    "z-js-framework": "^0.0.3"
   }
 }

@@ -11,10 +11,16 @@ importers:
       morphdom:
         specifier: ^2.7.3
         version: 2.7.3
+      z-js-framework:
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       jsdoc:
         specifier: ^4.0.3
         version: 4.0.3
+      rollup-plugin-brotli:
+        specifier: ^3.1.0
+        version: 3.1.0
       terser:
         specifier: ^5.26.0
         version: 5.31.1
@@ -400,6 +406,10 @@ packages:
   requizzle@0.2.4:
     resolution: {integrity: sha512-JRrFk1D4OQ4SqovXOgdav+K8EAhSB/LJZqCz8tbX0KObcdeM15Ss59ozWMBWmmINMagCwmqn4ZNryUGpBsl6Jw==}
 
+  rollup-plugin-brotli@3.1.0:
+    resolution: {integrity: sha512-vXRPVd9B1x+aaXeBdmLKNNsai9AH3o0Qikf4u0m1icKqgi3qVA4UhOfwGaPYoAHML1GLMUnR//PDhiMHXN/M6g==}
+    engines: {node: '>=11.7.0'}
+
   rollup@4.18.0:
     resolution: {integrity: sha512-QmJz14PX3rzbJCN1SG4Xe/bAAX2a6NpCP8ab2vfu2GiUr8AQcr2nCV/oEO3yneFarB67zk8ShlIyWb2LGTb3Sg==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -465,6 +475,9 @@ packages:
 
   xmlcreate@2.0.4:
     resolution: {integrity: sha512-nquOebG4sngPmGPICTS5EnxqhKbCmz5Ox5hsszI2T6U5qdrJizBc+0ilYSEjTSzU0yZcmvppztXe/5Al5fUwdg==}
+
+  z-js-framework@0.0.3:
+    resolution: {integrity: sha512-pPIjkdpyIoc51oiw0Ep2e6t1m8S4rioXgtelYu42gDAbnG3s1c4Nw3INfySqlabDBIFD8MzmQMKUPkZcK6NBdg==}
 
 snapshots:
 
@@ -755,6 +768,8 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
+  rollup-plugin-brotli@3.1.0: {}
+
   rollup@4.18.0:
     dependencies:
       '@types/estree': 1.0.5
@@ -811,3 +826,7 @@ snapshots:
       terser: 5.31.1
 
   xmlcreate@2.0.4: {}
+
+  z-js-framework@0.0.3:
+    dependencies:
+      morphdom: 2.7.3
