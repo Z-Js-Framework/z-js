@@ -16,10 +16,10 @@
 
 ## 🚀 Getting Started
 
-Before we get you started in case you asking, why another framework? first see [why z js framework](./sidenotes.md#-why-another-framework-why-not-listen-up) otherwise if you good with the motive of this, then the easiest way to get started with Z.Js Framework is to use the [create-z-app](https://github.com/z-js-framework/create-z-app) using command below. It will create a starter project with recommended project structure and common pattern examples.
+Before we get you started in case you asking, why another framework? first see [why z js framework](./sidenotes.md#-why-another-framework-why-not-listen-up) otherwise if you good with the motive of this, then the easiest way to get started with Z.Js Framework is to use the [create-z-project](https://github.com/z-js-framework/create-z-project) using command below. It will create a starter project with recommended project structure and common pattern examples.
 
 ``` bash
-npx create-z-app your-project-name
+npx create-z-project your-project-name
 ```
 
 after that just follow instructions that follow on there.
