@@ -62,7 +62,7 @@ Otherwise here is a quick view into the docs.
 - [Navigation](#navigation)
 - [Reactivity](#️-reactivity)
 - [Hooks](#hooks)
-- [Rendering Lists](#list)
+- [Rendering Lists](#lists)
 
 More Features coming, see the [Roadmap](./sidenotes.md#roadmap-and-features-if-you-like-to-contribute)
 
