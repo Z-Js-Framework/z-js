@@ -1,6 +1,6 @@
 {
   "name": "z-js-framework",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "The literally low overhead js framework!",
   "main": "index.js",
   "type": "module",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/javaScriptKampala/z-js.git"
+    "url": "git+https://github.com/Z-Js-Framework/z-js.git"
   },
   "keywords": [
     "Js",
@@ -42,9 +42,9 @@
   "author": "Hussein Kizz",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/javaScriptKampala/z-js/issues"
+    "url": "https://github.com/Z-Js-Framework/z-js/issues"
   },
-  "homepage": "https://github.com/javaScriptKampala/z-js#readme",
+  "homepage": "https://github.com/Z-Js-Framework/z-js#readme",
   "dependencies": {
     "morphdom": "^2.7.3",
     "z-js-framework": "^0.0.3"
