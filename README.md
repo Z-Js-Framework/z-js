@@ -1,4 +1,4 @@
-# 🔥 Z.Js Framework (v0.0.5)
+# 🔥 Z.Js Framework (v0.0.6)
 
 <div align="left">
 
