@@ -30,7 +30,7 @@ But if you want, you can still just install z alone without any starters with co
 npm install z-js-framework
 ```
 
-or use a cdn link directly in your html file, put in in in the head or body tag in index.html file of your project.
+or use a cdn link directly in your html file, put it in the head or body tag in index.html file of your project.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/z-js-framework@latest/dist/z.js"></script>
