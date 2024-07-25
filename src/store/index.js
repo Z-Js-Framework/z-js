@@ -42,7 +42,13 @@ export function useState(initialState) {
     subscribe: (fn) => channel.subscribe(fn),
     value: channel.getState(),
   };
-  const setState = channel.setState;
+  // enable passing component level state to state setter
+  const setState = (newValue) => {
+    if (typeof newValue === 'object' && newValue.hasOwnProperty('value')) {
+      return channel.setState(newValue.value);
+    }
+    return channel.setState;
+  };
 
   return [state, setState, channel];
 }
@@ -76,9 +82,16 @@ export function useStore(store) {
     id: store.id,
     current: () => store.getValue(),
     subscribe: (fn) => store.subscribe(fn),
-    value: store.getState(),
+    value: store.getValue(),
   };
-  const setState = store.setState;
+
+  // enable passing component level state to state setter
+  const setState = (newValue) => {
+    if (typeof newValue === 'object' && newValue.hasOwnProperty('value')) {
+      return store.setValue(newValue.value);
+    }
+    return store.setValue;
+  };
 
   return [state, setState, store.channel];
 }
