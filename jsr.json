@@ -1,0 +1,5 @@
+{
+  "name": "@z-js-framework/z-js",
+  "version": "0.0.6",
+  "exports": "./index.js"
+}
