@@ -1101,9 +1101,9 @@ function useStore(store) {
     id: store.id,
     current: () => store.getValue(),
     subscribe: (fn) => store.subscribe(fn),
-    value: store.getState()
+    value: store.getValue
   };
-  const setState = store.setState;
+  const setState = store.setValue;
   return [state, setState, store.channel];
 }
 class ZLink extends HTMLElement {
