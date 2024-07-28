@@ -45,7 +45,7 @@ const render = (parentElement = null, routes = [], initialDelay = 0) => {
   if (parentElement && routes.length > 0) {
     _parentElement = parentElement;
     // Create a new router instance
-    _router = Router({
+    _router = new Router({
       routes: routes,
       parent: parentElement,
       initialDelay: initialDelay,

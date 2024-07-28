@@ -1,7 +1,7 @@
 // code for z js utilities and helpers
 /**
- * Z Js Utility function
- * @description Acts as a short hand for the standard console.log
+ * @type function - Z Js Utility function
+ * @description A short hand for the standard console.log
  * @param {*} args
  * @returns  standard console methods
  */
