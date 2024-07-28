@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2023",
     "module": "commonjs",
     "allowJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": ".",
+    "outDir": "./@types",
     "checkJs": true
   },
   "include": [

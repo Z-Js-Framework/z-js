@@ -158,7 +158,7 @@ export function StateRadio(options = {}) {
         .reduce((obj, key) => {
           obj[key] = channels[key];
           return obj;
-        }, {});
+        }, []);
 
       channels = updatedChannels;
     } else {

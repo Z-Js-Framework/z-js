@@ -2,7 +2,7 @@ import { generateUniqueId } from '../utils/utilities.js';
 import { StateRadio } from './state-radio/lib/state-radio.js';
 
 // state management
-const { channels } = new StateRadio();
+const { channels } = StateRadio();
 
 export const radio = channels;
 
