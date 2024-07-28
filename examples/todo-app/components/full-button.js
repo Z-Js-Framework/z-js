@@ -1,4 +1,4 @@
-import { css, html } from 'z-js-framework';
+import { css, html } from '../../../index.js';
 
 export const FullButton = (text, onClick) => {
   let buttonStyle = css`

@@ -45,9 +45,10 @@ export function useState(initialState) {
   // enable passing component level state to state setter
   const setState = (newValue) => {
     if (typeof newValue === 'object' && newValue.hasOwnProperty('value')) {
-      return channel.setState(newValue.value);
+      console.log('object passed');
+      return channel.setState(newValue.current());
     }
-    return channel.setState;
+    return channel.setState(newValue);
   };
 
   return [state, setState, channel];
@@ -88,9 +89,9 @@ export function useStore(store) {
   // enable passing component level state to state setter
   const setState = (newValue) => {
     if (typeof newValue === 'object' && newValue.hasOwnProperty('value')) {
-      return store.setValue(newValue.value);
+      return store.setValue(newValue.current());
     }
-    return store.setValue;
+    return store.setValue(newValue);
   };
 
   return [state, setState, store.channel];

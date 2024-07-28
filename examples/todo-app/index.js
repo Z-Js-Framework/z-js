@@ -1,6 +1,6 @@
 'use strict';
 
-import { render } from 'z-js-framework';
+import { render } from '../../index.js';
 import TodosPage from './pages/todos';
 
 const app = document.querySelector('#app');

@@ -1,4 +1,4 @@
-import { html, useState, List, reactive, getRef } from 'z-js-framework';
+import { html, useState, List, reactive, getRef } from '../../../index.js';
 import { AppHeader } from '../components/app-header';
 import { TodoItem } from '../components/todo-item.js';
 

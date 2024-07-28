@@ -1,4 +1,4 @@
-import { css, html, useState } from 'z-js-framework';
+import { css, html, useEffect, useState } from '../../../index.js';
 
 const deleteStyles = css`
   background: red;
@@ -12,6 +12,10 @@ const deleteStyles = css`
 
 export const AppHeader = (props) => {
   const [todo, setTodo] = useState('');
+
+  useEffect(() => {
+    console.log('todo::', todo.current());
+  }, [todo]);
 
   return html` <header class="flex">
     <div class="flex-simple">

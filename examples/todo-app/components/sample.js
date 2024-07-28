@@ -4,7 +4,7 @@ import {
   useEffect,
   useStore,
   useRouter,
-} from 'z-js-framework/index.js';
+} from '../../../index.js';
 import { authStore } from '../store.js';
 
 export const AuthComponent = () => {

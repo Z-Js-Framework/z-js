@@ -1,4 +1,4 @@
-import { createStore } from 'z-js-framework';
+import { createStore } from '../../index.js';
 
 export const countStore = createStore(100);
 

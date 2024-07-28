@@ -46,7 +46,6 @@
   },
   "homepage": "https://github.com/Z-Js-Framework/z-js#readme",
   "dependencies": {
-    "morphdom": "^2.7.3",
-    "z-js-framework": "^0.0.3"
+    "morphdom": "^2.7.3"
   }
 }
