@@ -26,6 +26,7 @@ This is a work in progress and calling on all those who feel like modern js fram
 - ✅ Handle single page application model and routing
 - ✅ Handle automatic re-rendering on state change
 - ✅ Add useful hooks and utilities for common patterns
+- ✅ Add in builtin fetching and utilities for common data to UI patterns
 - 🔳 Add in builtin form utilities and enhancements
 - 🔳 Add in builtin promise utilities
 - 🔳 Add in builtin page transition and component transition animations

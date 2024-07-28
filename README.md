@@ -69,7 +69,9 @@ More Features coming, see the [Roadmap](./sidenotes.md#roadmap-and-features-if-y
 
 ## ❤️ Demos?
 
-- [Z-chat](https://github.com/Hussseinkizz/z-chat) -- demo chat app made using z js framework
+- [Z-chat](https://github.com/Hussseinkizz/z-chat) -- demo chat app made using z js framework and socket io
+- [Z-Tailwind-Demo](https://github.com/BakungaBronson/Z-Tailwind-Demo) -- demo app showing how to use tailwindcss with z js framework
+- [z-js-short-wave](https://github.com/KimmyDavis/z-js-short-wave) -- audio player app made using z js framework, enjoy the live demo [🎶 here](https://z-shot-wave.netlify.app/)
 
 We will be providing more examples, you can also submit your own examples in the [issues](https://github.com/Z-Js-Framework/z-js/issues) section. Am excited to see what you build for sure!
 
@@ -442,6 +444,8 @@ export default function TodosPage() {
 
 As you can see, the `List` utility takes in a few options, the ref is the ref of the parent element, items is the array of items to render, and render is the function that renders each item, it should return a single element and takes in each item in the items array as item which you can even alias as props.
 
+### 📥 Fetching
+
 > ✅ Fetching Data <a name="fetching"></a>
 
 Z Js is trying to be a responsible framework not letting you in a madness of extra tools to do common things and basic things that you need to do with almost every project, we instead make those as separate packages which we then have builtin so that you don't have to reach out to external libraries to achieve those common functionalities, sure there's when you must reach to external libraries but with z, not all the time, so here we have builtin fetch api wrapper with all advanced featurs you might need, use libs like axios for fetching at your own will but we got you covered, here is how you can do fetching in z applications.
@@ -600,10 +604,12 @@ You can also see the full list of all awesome [contributors](https://github.com/
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
-- Shout out to [Bakunga Bronson](https://github.com/BakungaBronson) for making the first external pr!
+- Shout out to [Kimmy Davis](https://github.com/KimmyDavis) for making the first coolest z js app, an audio player that actually works: [z shot-wave](https://z-shot-wave.netlify.app/) oof!
+- Shout out to [Bakunga Bronson](https://github.com/BakungaBronson) for making the first external pr and z js tailwind css demo!
 - Shout out to [Rasmus Schultz](https://x.com/mindplaydk) for making the first criticism about z's rendering and advising on the subsquent re-rendering improvements we have been making, he has benchmarked all vdom algorithms for example and has helped alot to see z improve to such heights too, a journey we still on!
 - React, Vue, And Solid Frameworks for inspiring Z js Framework and pioneering some of the paradimns adaptod here.
-- [Morphdom](https://github.com/patrick-steele-idem/morphdom) is great and we used it to handle dom diffing efficiently!
+- shout out to [Morphdom](https://github.com/patrick-steele-idem/morphdom) it is great dom diffing library and we used it to handle dom diffing efficiently!
+- Finally [Pionia Framework](https://pionia.netlify.app) also deserves a shout out for being the first backend framework to support z js out of the box, check it out, they really got some cool stuff there!
 - Thanks all friends who contributed thogugh wise to guide the z philosophy and approach.
 
 ## 👾 What Next?
