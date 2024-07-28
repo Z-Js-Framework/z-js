@@ -1,7 +1,7 @@
 {
   "name": "z-js-framework",
-  "version": "0.0.6",
-  "description": "The literally low overhead js framework!",
+  "version": "0.0.7",
+  "description": "The literally low mental overhead js framework!",
   "main": "index.js",
   "type": "module",
   "module": "index.js",

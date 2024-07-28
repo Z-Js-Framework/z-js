@@ -1,4 +1,4 @@
-# 🔥 Z.Js Framework (v0.0.6)
+# 🔥 Z.Js Framework (v0.0.7)
 
 <div align="left">
 
@@ -11,7 +11,7 @@
 
 </div>
 
-- The literally low overhead Js framework, that enhances html, css and javascript.
+- The literally low mental overhead Js framework, that enhances html, css and javascript.
 
 
 ## 🚀 Getting Started
@@ -22,9 +22,9 @@ Before we get you started in case you asking, why another framework? first see [
 npx create-z-project your-project-name
 ```
 
-after that just follow instructions that follow on there.
+after that just follow instructions that follow on there. And don't forget to install this vscode extension for better experience, [Inline HTML](https://marketplace.visualstudio.com/items?itemName=pushqrdx.inline-html) otherwise this might be so ugly syntax wise though it will still be simply beautiful.
 
-But if you want, you can still just install z alone without any starters with command below
+And, also if you want, you can still just install z alone without any starters with command below
 
 ```bash
 npm install z-js-framework
@@ -38,7 +38,7 @@ or use a cdn link directly in your html file, put it in the head or body tag in 
 
 Or for the ninjas, grab the z.js script file from Z.Js github repo in dist directory and include it in your project.
 
-One other thing, VS Code Extension, [Inline HTML](https://marketplace.visualstudio.com/items?itemName=pushqrdx.inline-html) (recommended)
+One other thing once again, VS Code Extension, [Inline HTML](https://marketplace.visualstudio.com/items?itemName=pushqrdx.inline-html) (recommended)
 
 This is not a must, but I must tell you that Z Js uses JavaScript template literals even for templating or crafting your UI, for example:
 
@@ -63,6 +63,7 @@ Otherwise here is a quick view into the docs.
 - [Reactivity](#️-reactivity)
 - [Hooks](#hooks)
 - [Rendering Lists](#lists)
+- [Fetching](#fetching)
 
 More Features coming, see the [Roadmap](./sidenotes.md#roadmap-and-features-if-you-like-to-contribute)
 
@@ -402,6 +403,8 @@ function fetchContent() {
 }
 ```
 
+That shows loading, and then bingo shows the content.
+
 ## 🌲 Rendering Lists
 
 Z Js has a few helpers to help you render lists or array of items. This is very useful when you working with a list of items or iterable data and you rendering them in a restrictive semantic element say a table or that you want to maintain the structure of the elements in dom exactly, i.e if elements a to be exactly direct children of the parent element, most frameworks provide helpers here such as the v-for in vue, etc. Here is how you can go about it in z.
@@ -439,24 +442,166 @@ export default function TodosPage() {
 
 As you can see, the `List` utility takes in a few options, the ref is the ref of the parent element, items is the array of items to render, and render is the function that renders each item, it should return a single element and takes in each item in the items array as item which you can even alias as props.
 
-That shows loading, and then bingo shows the content.
+> ✅ Fetching Data <a name="fetching"></a>
 
-## 😇 You want more?
+Z Js is trying to be a responsible framework not letting you in a madness of extra tools to do common things and basic things that you need to do with almost every project, we instead make those as separate packages which we then have builtin so that you don't have to reach out to external libraries to achieve those common functionalities, sure there's when you must reach to external libraries but with z, not all the time, so here we have builtin fetch api wrapper with all advanced featurs you might need, use libs like axios for fetching at your own will but we got you covered, here is how you can do fetching in z applications.
+
+### GET Request
+
+``` js
+import { GET } from 'z-js-framework';
+
+const getPosts = async () => {
+   const { data, error, loading } = await GET('https://jsonplaceholder.typicode.com/posts');
+  if (data) {
+    console.log('Data:', data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
+```
+
+### POST Request
+
+``` js
+import { POST } from 'z-js-framework';
+
+const createPost = async () => {
+   const { data, error, loading } = await POST('https://jsonplaceholder.typicode.com/posts', {
+    body: {
+      title: 'dune',
+      body: 'a story about the dune verse!',
+      userId: 1,
+    }
+   });
+  if (data) {
+    console.log('Data:', data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
+```
+
+### PUT Request
+
+``` js
+import { PUT } from 'z-js-framework';
+
+const updatePost = async () => {
+   const { data, error, loading } = await PUT('https://jsonplaceholder.typicode.com/posts/1', {
+    body: {
+      title: 'dune latest',
+      body: 'a story about the dune verse has changed now the spices rule!',
+      userId: 1,
+    }
+   });
+  if (data) {
+    console.log('Data:', data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
+```
+
+### PATCH Request
+
+``` js
+import { PATCH } from 'z-js-framework';
+
+const modifyPost = async () => {
+   const { data, error, loading } = await PATCH('https://jsonplaceholder.typicode.com/posts/1', {
+    body: {
+      title: 'dune movie'
+    }
+   });
+  if (data) {
+    console.log('Data:', data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
+```
+
+### DELETE Request
+
+``` js
+import { DELETE } from 'z-js-framework';
+
+const deletePost = async () => {
+   const { error } = await DELETE('https://jsonplaceholder.typicode.com/posts/1');
+  if (!error) {
+    console.log('item deleted successfully!');
+  } else {
+    console.error('Error Deleting Item:', error.message);
+  }
+}
+```
+
+### Setting Global Configuration
+
+```js
+import { setConfig, GET } from 'z-js-framework';
+
+setConfig({
+  baseUrl: 'https://jsonplaceholder.typicode.com',
+  timeout: 5000,
+  withCredentials: false,
+  parseJson: true,
+});
+
+const getPosts = async () => {
+   const { data, error, loading } = await GET('/posts');
+  if (data) {
+    console.log('Data:', data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
+```
+
+or set per request
+
+```js
+import { GET } from 'z-js-framework';
+
+const getPosts = async () => {
+   const { data, error, loading } = await GET('https://jsonplaceholder.typicode.com/posts', {
+    parseJson: false,
+     headers: {
+    'Content-Type': 'application/text',
+     },
+     retry: true,
+     maxRetries: 3,
+   });
+
+  if (data) {
+    console.log('Data:', data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
+```
+
+You can of course do a lot more, see our mighty [Z-Fetch](https://github.com/Z-Js-Framework/z-fetch) for complete docs on what you can do, all nitty gritties covered.
+
+Enjoy buildinga cool things with z js, that's it for now, we are working on more docs and examples, stay tuned!
+
+## 😇 What if You want more?
 
 Come on, more stuff is coming, and if you reach all the way here, you are really a samurai now. You can start using Z Js to build your next app. See the examples folder for some examples, as we prepare more docs later, but that's it for now, that's Z Js framework, let's get building!
 
 More documentation and examples of common use cases will be coming soon. Help contribute!
 
-
 ## ✍️ Authors <a name = "authors"></a>
 
 - [@HusseinKizz](https://github.com/Hussseinkizz) - Z Js Creator
 
-See also the list of [contributors](https://github.com/Z-Js-Framework/z-js/graphs/contributors) who participated on this awesome project.
+You can also see the full list of all awesome [contributors](https://github.com/Z-Js-Framework/z-js/graphs/contributors) who participated on this awesome project.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
 - Shout out to [Bakunga Bronson](https://github.com/BakungaBronson) for making the first external pr!
+- Shout out to [Rasmus Schultz](https://x.com/mindplaydk) for making the first criticism about z's rendering and advising on the subsquent re-rendering improvements we have been making, he has benchmarked all vdom algorithms for example and has helped alot to see z improve to such heights too, a journey we still on!
 - React, Vue, And Solid Frameworks for inspiring Z js Framework and pioneering some of the paradimns adaptod here.
 - [Morphdom](https://github.com/patrick-steele-idem/morphdom) is great and we used it to handle dom diffing efficiently!
 - Thanks all friends who contributed thogugh wise to guide the z philosophy and approach.

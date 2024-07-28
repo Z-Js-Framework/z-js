@@ -15,6 +15,15 @@ import {
   useStore,
 } from './src/store/index.js';
 import { Router } from './src/routing/router.js';
+import {
+  setConfig,
+  setBearerToken,
+  GET,
+  POST,
+  PUT,
+  PATCH,
+  DELETE,
+} from './src/fetch/index.js';
 
 let _router = null;
 let _parentElement = null;
@@ -64,4 +73,11 @@ export {
   useRouter,
   getRootElement,
   useSuspense,
+  setConfig,
+  setBearerToken,
+  GET,
+  POST,
+  PUT,
+  PATCH,
+  DELETE,
 };
