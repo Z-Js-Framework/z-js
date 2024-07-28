@@ -11,7 +11,7 @@ let refElements = [];
  *
  * @param {TemplateStringsArray} strings - Template literal strings.
  * @param {...*} values - Template literal values.
- * @returns {HTMLElement} The created HTML element.
+ * @returns {HTMLElement | Text} The created HTML element.
  */
 export function html(strings, ...values) {
   // Store functions, states and elements separately for future use
@@ -163,7 +163,7 @@ function getRootElement(fullString) {
 /**
  * Recursively builds an abstract syntax tree (AST) structure from a DOM element.
  *
- * @param {HTMLElement} element - The DOM element to process.
+ * @param {HTMLElement | any} element - The DOM element to process.
  * @param {Array} functions - List of functions to associate with the element.
  * @param {Array} elements - List of elements to associate with the element.
  * @returns {Object} The AST structure representing the element.
@@ -206,7 +206,7 @@ function buildStructure(element, functions, elements) {
  * Creates an HTML element from an AST structure.
  *
  * @param {Object} structure - The AST structure representing the element.
- * @returns {HTMLElement} The created HTML element.
+ * @returns {HTMLElement | Text} The created HTML element.
  */
 export function createElement(structure, trackedStates) {
   const { type, content, attributes, children, elements } = structure;
@@ -355,7 +355,7 @@ export function reactive(htmlFn) {
 /**
  * updates the DOM using morphdom.
  *
- * @param {HTMLElement} fromNode - The source DOM node to be updated.
+ * @param {HTMLElement | Element} fromNode - The source DOM node to be updated.
  * @param {HTMLElement} toNode - The target HTML DOM node representing the new content.
  * @param {Object} [options={}] - Optional configuration object to enable/disable specific morphdom options.
  */
@@ -375,7 +375,7 @@ function updateDom(fromNode, toNode, options = {}) {
  *
  * @param {Object} props - The props object for the List component.
  * @param {string} props.ref - The reference to the target element where the list should be rendered.
- * @param {any[]} props.items - The array of items to be rendered in the list.
+ * @param {any} props.items - The array of items to be rendered in the list.
  * @param {function} props.render - The function to render each item in the list. It should return a valid html element.
  * @returns {Object} - An object containing metadata about the list, including the type, reference, unique ID, and render function, this is used internally to render the list after the initial render.
  */
